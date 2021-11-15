@@ -1,0 +1,19 @@
+{
+  "name": "borga",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app_main.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "node ./borga-server.js",
+    "all-tests": "jest"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "jest": "^27.3.1"
+  }
+}
