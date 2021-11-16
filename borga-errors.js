@@ -10,7 +10,7 @@ module.exports = {
         code: 2,
         message: 'Board Game Atlas API gave an unexpected response'
     },
-    BGATLAS_INVALID_ID : {
+    BGATLAS_NOT_FOUND : {
         code: 3,
         message: 'Invalid Board Game Atlas ID'
     }

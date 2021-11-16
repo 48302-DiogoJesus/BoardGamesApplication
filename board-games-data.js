@@ -103,15 +103,14 @@ async function fetchFromServer(command, args) {
  * Get Top 10 popular games
  * @returns a list containing information about every game in the top 10 popularity ranking
  */
-async function getPopularGamesList() {
+async function getPopularGamesList(n) {
     return fetchFromServer("search_games")
     .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
     .then(data => {
         let games = data.games
-        if (games == undefined)
-            throw error.BGATLAS_UNEXPECTED_RESPONSE
-        // Extract the Top 10 Games
-        return buildGames(games.slice(0,10))
+        if (games == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
+        // Extract the Top n Games
+        return buildGames(games.slice(0,n))
     })
 }
 
@@ -120,11 +119,11 @@ async function getPopularGamesList() {
  * @returns a game object
  */
 async function getGameById(id) {
-    return fetchFromServer("search_game_id")
+    return fetchFromServer("search_game_id", id)
         .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
         .then(data => {
+            if (data.count == 0) throw error.BGATLAS_NOT_FOUND
             let game = data.games[0]
-            if (game == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
             return buildGame(game)
         })
 }
@@ -138,13 +137,15 @@ async function getGamesListByName(name) {
     return fetchFromServer("search_game_name", name)
     .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
     .then(data => {
+        if (data.count == 0) throw error.BGATLAS_NOT_FOUND
         let games = data.games
-        if (games == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
-        return buildGames(games.slice(0,10))
+        return buildGames(games.slice(0, data.count))
     })
 }
 
 async function test() {
+    // console.log(await getGameById("TAAifFP590"))
+    // console.log(await getPopularGamesList())
     // console.log(await getGamesListByName("Pair"))
 }
 test()
