@@ -11,3 +11,6 @@ const groups = {
 
 // GROUPS MANAGEMENT \\
 // CREATE, DELETE, EDIT(NAME,GAMES(DELETE, ADD, LIST_ALL))
+function groupExists(groupID){
+    if(groups[groupID] != null) return true; else return false
+}
