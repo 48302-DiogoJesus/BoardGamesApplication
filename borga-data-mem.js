@@ -25,6 +25,31 @@ function groupHasGame(group_ID, game_ID) {
     if (groups[group_ID].games.includes(game_ID)) return true; else return false
 }
 
+function changeNameFromGroup(group_ID, new_name){
+
+    if(!groupExists(groupID)) return false
+
+    const group = groups[groupID]
+
+    if(group == null) return false
+
+    group.name = new_name
+}
+
+
+function createGroup(group_ID, group_name){
+
+    if(!groupExists(group_ID)){
+        groups[group_ID] = {
+            'name' : group_name,
+            'games' : []
+        }
+    }
+    else{
+        console.log("This group already exists!")
+    }
+}
+
 /**
  * Delete a Games Group
  * @param {group_ID} identifier of a group
