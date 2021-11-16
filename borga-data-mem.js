@@ -14,7 +14,6 @@ const groups = {
 }
 
 // GROUPS MANAGEMENT \\
-// CREATE, DELETE, EDIT(NAME,GAMES(DELETE, ADD, LIST_ALL))
 
 function groupExists(group_ID){
     if(groups[group_ID] != null) return true; else return false
@@ -39,7 +38,7 @@ function changeGroupName(group_ID, new_name){
 
 function createGroup(group_ID, group_name){
 
-    if(groupExists(group_ID)) throw error.DATA_MEM_GROUP_ALREADY_EXIST
+    if(groupExists(group_ID)) throw error.DATA_MEM_GROUP_ALREADY_EXISTS
 
     groups[group_ID] = {
         'name' : group_name,
@@ -61,10 +60,18 @@ function deleteGroup(group_ID) {
 }
 
 function deleteGroupGame(group_ID, game_ID) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_NOT_DELETED
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (!groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
 
     const index = groups[group_ID].games.indexOf(game_ID);
     if (index > -1) groups[group_ID].games.splice(index, 1)
     if (groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
+}
+
+function addGroupGame(group_ID, new_game_ID) {
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
+
+    groups[group_ID].games.push(new_game_ID)
+    return true
 }
