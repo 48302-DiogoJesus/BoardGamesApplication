@@ -71,3 +71,11 @@ function getGroupGames(group_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     return groups[group_ID].games
 }
+
+function addGroupGame(group_ID, new_game_ID) {
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
+
+    groups[group_ID].games.push(new_game_ID)
+    return true
+}
