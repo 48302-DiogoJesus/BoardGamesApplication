@@ -11,6 +11,7 @@ const groups = {
 
 // GROUPS MANAGEMENT \\
 // CREATE, DELETE, EDIT(NAME,GAMES(DELETE, ADD, LIST_ALL))
+<<<<<<< HEAD
 
 /**
  * Delete a Games Group
@@ -22,4 +23,8 @@ function deleteGroup(group_ID) {
     delete groups[group_ID]
     // Make sure group got deleted
     if (groupExits(group_ID)) return false; else return true
+=======
+function groupExists(groupID){
+    if(groups[groupID] != null) return true; else return false
+>>>>>>> 17a00d80f19e3c5daf3539d41ea66046b133e8ee
 }
