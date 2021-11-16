@@ -25,29 +25,27 @@ function groupHasGame(group_ID, game_ID) {
     if (groups[group_ID].games.includes(game_ID)) return true; else return false
 }
 
-function changeNameFromGroup(group_ID, new_name){
+function changeGroupName(group_ID, new_name){
 
-    if(!groupExists(groupID)) return false
+    if(!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 
-    const group = groups[groupID]
-
-    if(group == null) return false
+    const group = groups[group_ID]
 
     group.name = new_name
+
+    return new_name
 }
 
 
 function createGroup(group_ID, group_name){
 
-    if(!groupExists(group_ID)){
-        groups[group_ID] = {
-            'name' : group_name,
-            'games' : []
-        }
+    if(groupExists(group_ID)) throw error.DATA_MEM_GROUP_ALREADY_EXIST
+
+    groups[group_ID] = {
+        'name' : group_name,
+        'games' : []
     }
-    else{
-        console.log("This group already exists!")
-    }
+    return group_ID
 }
 
 /**
@@ -56,16 +54,17 @@ function createGroup(group_ID, group_name){
  * @returns true if group got deleted or false if group doesn't exist or couldn't be deleted 
  */
 function deleteGroup(group_ID) {
-    if (!groupExists(group_ID)) return false
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     delete groups[group_ID]
     // Make sure group got deleted
-    if (groupExists(group_ID)) return false; else return true
+    if (groupExists(group_ID)) throw error.DATA_MEM_GROUP_NOT_DELETED; else return true
 }
 
-function deleteGameFromGroup(group_ID, game_ID) {
-    if (!groupExists(group_ID)) return false
-    if (!groupHasGame(group_ID, game_ID)) return false
+function deleteGroupGame(group_ID, game_ID) {
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_NOT_DELETED
+    if (!groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
+
     const index = groups[group_ID].games.indexOf(game_ID);
     if (index > -1) groups[group_ID].games.splice(index, 1)
-    if (groupHasGame(group_ID, game_ID)) return false; else return true
+    if (groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
 }
