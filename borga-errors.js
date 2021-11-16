@@ -37,6 +37,10 @@ module.exports = {
     DATA_MEM_GROUP_ALREADY_HAS_GAME: {
         code: 206,
         message: 'Game is already inside that group'
+    },
+    DATA_MEM_INVALID_GROUP_NAME: {
+        code: 207,
+        message: 'Invalid group name'
     }
 
 };

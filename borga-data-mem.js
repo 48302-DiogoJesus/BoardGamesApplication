@@ -3,16 +3,7 @@
 const error = require('./borga-errors')
 
 // Groups structure \\
-const groups = {
-    1 : {
-        name : "Meu grupo",
-        games : ['aJHA87BH', 'asjkdh8GHSGD', 'dkjasgjdh89DSHG']
-    },
-    2 : {
-        name : "Meu grdupo",
-        games : ['aJHA8asd7BH', 'asjkasddh8GHSGD']
-    }
-}
+var groups = {}
 
 // GROUPS MANAGEMENT \\
 
@@ -23,6 +14,13 @@ const groups = {
  */
 function groupExists(group_ID){
     if(groups[group_ID] != null) return true; else return false
+}
+
+/**
+ * Removes everything from the groups object for testability purposes
+ */
+const cleanGroups = () => {
+    groups = {}
 }
 
 /**
@@ -45,8 +43,19 @@ function groupHasGame(group_ID, game_ID) {
 function changeGroupName(group_ID, new_name){
     if(!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     const group = groups[group_ID]
+    if (new_name === '') throw error.DATA_MEM_INVALID_GROUP_NAME
     group.name = new_name
     return new_name
+}
+
+/**
+ * Get a group object
+ * @param {group_id} Group ID
+ * @returns a group object identified by group_id
+ */
+function getGroup(group_ID) {
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    return groups[group_ID]
 }
 
 /**
@@ -91,6 +100,19 @@ function deleteGroupGame(group_ID, game_ID) {
 }
 
 /**
+ * Add a Game to a Group
+ * @param {group_ID} Group ID
+ * @param {new_game_ID} New Game ID
+ * @returns true if game is successfuly added to group
+ */
+ function addGroupGame(group_ID, new_game_ID) {
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
+    groups[group_ID].games.push(new_game_ID)
+    return true
+}
+
+/**
  * Get a list of all Group Games
  * @param {group_ID} Group ID
  * @returns list with all games from that group
@@ -100,15 +122,13 @@ function getGroupGames(group_ID) {
     return groups[group_ID].games
 }
 
-/**
- * Add a Game to a Group
- * @param {group_ID} Group ID
- * @param {new_game_ID} New Game ID
- * @returns true if game is successfuly added to group
- */
-function addGameToGroup(group_ID, new_game_ID) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    if (groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
-    groups[group_ID].games.push(new_game_ID)
-    return true
+module.exports = {
+    cleanGroups : cleanGroups,
+    changeGroupName : changeGroupName,
+    createGroup : createGroup,
+    deleteGroup : deleteGroup,
+    getGroup : getGroup,
+    deleteGroupGame : deleteGroupGame,
+    addGroupGame : addGroupGame,
+    getGroupGames : getGroupGames
 }
