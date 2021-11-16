@@ -41,6 +41,9 @@ module.exports = {
     DATA_MEM_INVALID_GROUP_NAME: {
         code: 207,
         message: 'Invalid group name'
+    },
+    DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP: {
+        code: 208,
+        message: 'Although group exists and this game is not a duplicate, could not add it to group'
     }
-
 };

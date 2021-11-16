@@ -5,8 +5,6 @@ const error = require('./borga-errors')
 // Groups structure \\
 var groups = {}
 
-// GROUPS MANAGEMENT \\
-
 /**
  * Removes everything from the groups object for testability purposes
  */
@@ -51,7 +49,7 @@ function changeGroupName(group_ID, new_name){
 /**
  * Get a group object
  * @param {group_id} Group ID
- * @returns a group object identified by group_id
+ * @returns the group object identified by group_id
  */
 function getGroup(group_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
@@ -61,7 +59,7 @@ function getGroup(group_ID) {
 /**
  * Creates new group
  * @param {group_name} New group name
- * @returns [group_id] if group is created successfuly
+ * @returns the id of the group if it is created successfuly
  */
 function createGroup(group_name){
     if (group_name === "") throw error.DATA_MEM_INVALID_GROUP_NAME
@@ -76,7 +74,7 @@ function createGroup(group_name){
 /**
  * Delete a Games Group
  * @param {group_ID} identifier of a group
- * @returns true if group got deleted or false if group doesn't exist or couldn't be deleted 
+ * @returns true if group got deleted successfuly
  */
 function deleteGroup(group_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
@@ -89,11 +87,12 @@ function deleteGroup(group_ID) {
  * Deletes a Game from a Group
  * @param {group_ID} Group ID
  * @param {game_ID} Game IF
- * @returns true if group game was deleted
+ * @returns true if that group game was deleted
  */
 function deleteGroupGame(group_ID, game_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (!groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
+    // Remove game from games list
     const index = groups[group_ID].games.indexOf(game_ID);
     if (index > -1) groups[group_ID].games.splice(index, 1)
     if (groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
@@ -103,13 +102,13 @@ function deleteGroupGame(group_ID, game_ID) {
  * Add a Game to a Group
  * @param {group_ID} Group ID
  * @param {new_game_ID} New Game ID
- * @returns true if game is successfuly added to group
+ * @returns [new_game_ID] if game is successfuly added to group
  */
  function addGroupGame(group_ID, new_game_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
     groups[group_ID].games.push(new_game_ID)
-    return true
+    if (!groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP; else return new_game_ID
 }
 
 /**
@@ -124,10 +123,12 @@ function getGroupGames(group_ID) {
 
 module.exports = {
     cleanGroups : cleanGroups,
+    // Group functions
     changeGroupName : changeGroupName,
     createGroup : createGroup,
     deleteGroup : deleteGroup,
     getGroup : getGroup,
+    // Group Games functions
     deleteGroupGame : deleteGroupGame,
     addGroupGame : addGroupGame,
     getGroupGames : getGroupGames
