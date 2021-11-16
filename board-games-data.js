@@ -101,7 +101,7 @@ async function fetchFromServer(command, args) {
 
 /**
  * Get Top 10 popular games
- * @returns a list containing information about every game in the top 10 popularity ranking
+ * @returns a promise with a list containing information about every game in the top 10 popularity ranking or an error passed before
  */
 async function getPopularGamesList(n) {
     return fetchFromServer("search_games")
@@ -116,7 +116,7 @@ async function getPopularGamesList(n) {
 
 /**
  * Get a game object from a Game ID
- * @returns a game object
+ * @returns a promise with a game object or an error passed before
  */
 async function getGameById(id) {
     return fetchFromServer("search_game_id", id)
@@ -131,7 +131,7 @@ async function getGameById(id) {
 /**
  * Get a game object from a Game name search
  * @param {name} string to search for in the API by using the query "name=[name]"
- * @returns a list of the first 10 game objects obtained by searching for [name]
+ * @returns a promise with a list of the first 10 game objects obtained by searching for [name]
  */
 async function getGamesListByName(name) {
     return fetchFromServer("search_game_name", name)
@@ -143,9 +143,16 @@ async function getGamesListByName(name) {
     })
 }
 
+// Temporary testing purposes only
 async function test() {
     // console.log(await getGameById("TAAifFP590"))
     // console.log(await getPopularGamesList())
     // console.log(await getGamesListByName("Pair"))
 }
 test()
+
+modules.export = {
+    getGameById : getGameById,
+    getGamesListByName : getGamesListByName,
+    getPopularGamesList : getPopularGamesList
+}
