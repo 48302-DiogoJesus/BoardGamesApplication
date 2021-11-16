@@ -44,10 +44,12 @@ function buildQueryURL(command, args) {
  * @returns a list containing only the needed information about every game inside [games]
  */
 async function isAvailable() {
-    return fetch(BOARD_GAMES_URI).then(res=> {
-        if (res.status == 403) throw error.BGATLAS_INVALID_ID
-        return true
-    }).catch(_=> {throw error.BGATLAS_UNAVAILABLE})
+    return fetch(BOARD_GAMES_URI)
+        .catch(_=> {throw error.BGATLAS_UNAVAILABLE})
+        .then(res=> {
+            if (res.status == 403) throw error.BGATLAS_INVALID_ID
+            return true
+        })
 }
 
 /**
@@ -90,8 +92,9 @@ async function fetchFromServer(command, args) {
     await isAvailable()
     let search_url = buildQueryURL(command, args)
     return fetch(search_url)
-    .then(res => res.json())
     .catch(_=> {throw error.BGATLAS_UNEXPECTED_RESPONSE})
+    .then(res => res.json())
+    
 }
 
 // MAIN FUNCTIONS \\
@@ -101,13 +104,15 @@ async function fetchFromServer(command, args) {
  * @returns a list containing information about every game in the top 10 popularity ranking
  */
 async function getPopularGamesList() {
-    return fetchFromServer("search_games").then(data => {
+    return fetchFromServer("search_games")
+    .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
+    .then(data => {
         let games = data.games
         if (games == undefined)
             throw error.BGATLAS_UNEXPECTED_RESPONSE
         // Extract the Top 10 Games
         return buildGames(games.slice(0,10))
-    }).catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
+    })
 }
 
 /**
@@ -115,11 +120,13 @@ async function getPopularGamesList() {
  * @returns a game object
  */
 async function getGameById(id) {
-    return fetchFromServer("search_game_id").then(data => {
-        let game = data.games[0]
-        if (game == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
-        return buildGame(game)
-    }).catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
+    return fetchFromServer("search_game_id")
+        .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
+        .then(data => {
+            let game = data.games[0]
+            if (game == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
+            return buildGame(game)
+        })
 }
 
 /**
@@ -128,11 +135,13 @@ async function getGameById(id) {
  * @returns a list of the first 10 game objects obtained by searching for [name]
  */
 async function getGamesListByName(name) {
-    return fetchFromServer("search_game_name", name).then(data => {
+    return fetchFromServer("search_game_name", name)
+    .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
+    .then(data => {
         let games = data.games
         if (games == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
         return buildGames(games.slice(0,10))
-    }).catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
+    })
 }
 
 async function test() {
