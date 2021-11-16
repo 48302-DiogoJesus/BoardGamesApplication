@@ -8,19 +8,19 @@ var groups = {}
 // GROUPS MANAGEMENT \\
 
 /**
+ * Removes everything from the groups object for testability purposes
+ */
+ const cleanGroups = () => {
+    groups = {}
+}
+
+/**
  * Checks if group exists 
  * @param {group_ID} Group ID
  * @returns true if group exists or false if not
  */
 function groupExists(group_ID){
     if(groups[group_ID] != null) return true; else return false
-}
-
-/**
- * Removes everything from the groups object for testability purposes
- */
-const cleanGroups = () => {
-    groups = {}
 }
 
 /**
@@ -60,17 +60,17 @@ function getGroup(group_ID) {
 
 /**
  * Creates new group
- * @param {group_ID} Group ID
  * @param {group_name} New group name
  * @returns [group_id] if group is created successfuly
  */
-function createGroup(group_ID, group_name){
-    if(groupExists(group_ID)) throw error.DATA_MEM_GROUP_ALREADY_EXISTS
-    groups[group_ID] = {
+function createGroup(group_name){
+    if (group_name === "") throw error.DATA_MEM_INVALID_GROUP_NAME
+    let newID = Object.keys(groups).length + 1
+    groups[newID] = {
         'name' : group_name,
         'games' : []
     }
-    return group_ID
+    return newID
 }
 
 /**
