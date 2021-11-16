@@ -1,5 +1,23 @@
 const dataMem = require('../borga-data-mem')
 
+// TESTS TEMPLATE FOR borga-data-mem 
+/*
+test('Description of the test here', () => {
+
+    Examples to validate THIS test: 
+    expect(test value).toBe(null)
+    or
+    expect(test value).toStrictEqual({
+        'name' : 'New Name',
+        'games': []
+    })
+    or 
+    https://jestjs.io/docs/expect
+
+    dataMem.deleteGroup()  // To avoid leaving unwanted groups to the next test
+})
+*/
+
 // createGroup
 test('Create group with empty name', () => {
     let newGroupID = dataMem.createGroup()
@@ -8,7 +26,6 @@ test('Create group with empty name', () => {
     } catch (err) {
         expect(err.code).toBe(207)
     }
-    dataMem.cleanGroups()
 })
 
 test('Create group with valid name', () => {
@@ -17,7 +34,7 @@ test('Create group with valid name', () => {
         name: "New Valid Group Name",
         games: []
     })
-    dataMem.cleanGroups()
+    dataMem.deleteGroup(newGroupID)
 })
 
 // getGroup
@@ -28,9 +45,7 @@ test('Get group that does not exist', () => {
         expect(err.code).toBe(201)
         return
     }
-    dataMem.cleanGroups()
 })
-
 
 test('Get object from valid group', () => {
     let newGroupID = dataMem.createGroup("New Group")
@@ -38,7 +53,7 @@ test('Get object from valid group', () => {
         'name': 'New Group',
         games: []
     })
-    dataMem.cleanGroups()
+    dataMem.deleteGroup(newGroupID)
 })
 
 // changeGroupName
@@ -50,7 +65,6 @@ test('Change group name if new name is empty', () => {
         expect(err.code).toBe(207)
         return
     }
-    dataMem.cleanGroups()
 })
 
 test('Change group name if new name is not empty', () => {
@@ -58,7 +72,7 @@ test('Change group name if new name is not empty', () => {
     let newName = "New Group Name"
     dataMem.changeGroupName(groupID, newName)
     expect(dataMem.getGroup(groupID).name).toBe(newName)
-    dataMem.cleanGroups()
+    dataMem.deleteGroup(groupID)
 })
 
 test('Change group name from group that does not exist', () => {
@@ -68,5 +82,4 @@ test('Change group name from group that does not exist', () => {
         expect(err.code).toBe(201)
         return
     }
-    dataMem.cleanGroups()
 })
