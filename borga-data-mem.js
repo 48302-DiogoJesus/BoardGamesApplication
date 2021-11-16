@@ -5,13 +5,25 @@ const error = require('./borga-errors')
 const groups = {
     1 : {
         name : "Meu grupo",
-        games : ['aJHA87BH', 'asjkdh8GHSGD']
+        games : ['aJHA87BH', 'asjkdh8GHSGD', 'dkjasgjdh89DSHG']
+    },
+    2 : {
+        name : "Meu grdupo",
+        games : ['aJHA8asd7BH', 'asjkasddh8GHSGD']
     }
 }
 
 // GROUPS MANAGEMENT \\
 // CREATE, DELETE, EDIT(NAME,GAMES(DELETE, ADD, LIST_ALL))
-<<<<<<< HEAD
+
+function groupExists(group_ID){
+    if(groups[group_ID] != null) return true; else return false
+}
+
+function groupHasGame(group_ID, game_ID) {
+    if (!groupExists(group_ID)) return false
+    if (groups[group_ID].games.includes(game_ID)) return true; else return false
+}
 
 /**
  * Delete a Games Group
@@ -19,12 +31,16 @@ const groups = {
  * @returns true if group got deleted or false if group doesn't exist or couldn't be deleted 
  */
 function deleteGroup(group_ID) {
-    if (!groupExits(group_ID)) return false
+    if (!groupExists(group_ID)) return false
     delete groups[group_ID]
     // Make sure group got deleted
-    if (groupExits(group_ID)) return false; else return true
-=======
-function groupExists(groupID){
-    if(groups[groupID] != null) return true; else return false
->>>>>>> 17a00d80f19e3c5daf3539d41ea66046b133e8ee
+    if (groupExists(group_ID)) return false; else return true
+}
+
+function deleteGameFromGroup(group_ID, game_ID) {
+    if (!groupExists(group_ID)) return false
+    if (!groupHasGame(group_ID, game_ID)) return false
+    const index = groups[group_ID].games.indexOf(game_ID);
+    if (index > -1) groups[group_ID].games.splice(index, 1)
+    if (groupHasGame(group_ID, game_ID)) return false; else return true
 }
