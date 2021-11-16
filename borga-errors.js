@@ -33,6 +33,10 @@ module.exports = {
     DATA_MEM_GAME_NOT_DELETED_FROM_GROUP: {
         code: 205,
         message: 'Game could not be deleted from group' 
+    },
+    DATA_MEM_GROUP_ALREADY_HAS_GAME: {
+        code: 206,
+        message: 'Game is already inside that group'
     }
 
 };
