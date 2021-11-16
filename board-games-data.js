@@ -31,8 +31,8 @@ const COMMANDS = {
  */
 function buildQueryURL(command, args) {
     if (Object.keys(COMMANDS).includes(command)) {
-        if (args == undefined) return `${COMMANDS[command]}`
-        else return `${COMMANDS[command]}${args}`
+        if (args == undefined) return COMMANDS[command]
+        return `${COMMANDS[command]}${args}`
     }
     // Invalid Command
     return false
@@ -48,7 +48,7 @@ async function isAvailable() {
         .catch(_=> {throw error.BGATLAS_UNAVAILABLE})
         .then(res=> {
             if (res.status == 403) throw error.BGATLAS_INVALID_ID
-            return true
+            return
         })
 }
 
