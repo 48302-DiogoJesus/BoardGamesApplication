@@ -143,14 +143,6 @@ async function getGamesListByName(name) {
     })
 }
 
-// Temporary testing purposes only
-async function test() {
-     console.log(await getGameById("TAAifFP590"))
-     console.log(await getPopularGamesList())
-     console.log(await getGamesListByName("Pair"))
-}
-test()
-
 module.exports = {
     getGameById : getGameById,
     getGamesListByName : getGamesListByName,

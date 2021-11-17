@@ -1,18 +1,20 @@
 'use strict'
 
-const default_port = 8888;
-const port = process.argv[2] || default_port;
+const DEFAULT_PORT = 8888;
+const SERVER_PORT = process.argv[2] || DEFAULT_PORT;
 
-const data_ext_books = require('./app-data-ext-books');
-const data_int = require('./app-data-int-mem');
+const borga_games_data = require('./board-games-data');
+const borga_data_mem = require('./borga-data-mem');
 
-const services = require('./app-services')(data_ext_books, data_int);
+const services = require('./borga-services')(borga_games_data, borga_data_mem);
 
-const webapi = require('./app-webapi')(services);
+const web_api = require('./borga-web-api')(services);
 
 const express = require('express');
 const app = express();
 
-app.use('/api', webapi);
+app.use('/api', web_api);
 
-app.listen(port);
+app.listen(SERVER_PORT, () => {
+    console.log(`BORGA listening on port ${SERVER_PORT}`);
+});

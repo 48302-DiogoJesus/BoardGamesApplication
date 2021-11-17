@@ -22,9 +22,21 @@ module.exports = function (services) {
 
 	router.use(express.json());
 
-	// Resource: /global/books
-	router.get('/global/books', searchGlobalBooks);
+	function handleGamesQueries(req) {
+		switch(req.query) {
 
+		}
+	}
+
+	async function getTopN(req, res) {
+		res.json(await services.getPopularGamesList(req.query.top))
+	}
+	
+	// Resource: /global/books
+	router.get('/games/?top=56&abc=asdh', getTopN);
+
+
+	/*
 	// Resource: /my/books
 	router.get('/my/books', getMyBooks);
 	router.post('/my/books', addMyBookById);
@@ -32,6 +44,7 @@ module.exports = function (services) {
 	// Resource: /my/books/<bookId>
 	router.get('/my/books/:bookId', getMyBookById);
 	router.delete('/my/books/:bookId', deleteMyBookById);
+	*/
 
 	return router;
 };
