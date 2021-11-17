@@ -48,12 +48,7 @@ function groupExists(group_ID){
  */
 function groupHasGame(group_id, search_game_id) {
     if (!groupExists(group_id)) return false
-    for (let curr_game_id of Object.keys(groups[group_id].games)) {
-        console.log(curr_game_id)
-        console.log(search_game_id)
-        if (curr_game_id == search_game_id) return true
-    }
-    return false
+    return groups[group_id].games[search_game_id] != null
 }
 
 /**
