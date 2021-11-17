@@ -20,7 +20,7 @@ test('Description of the test here', () => {
 */
 
 // createGroup
-test('Create group with empty name', () => {
+test('Create group with empty name and description', () => {
     let newGroupID = dataMem.createGroup()
     try {
         dataMem.getGroup(newGroupID)
@@ -31,10 +31,10 @@ test('Create group with empty name', () => {
 })
 
 test('Create group with valid name', () => {
-    let newGroupID = dataMem.createGroup("New Valid Group Name")
+    let newGroupID = dataMem.createGroup("New Valid Group Name", "New group description")
     expect(dataMem.getGroup(newGroupID)).toStrictEqual({
         name: "New Valid Group Name",
-        description: '',
+        description: "New group description",
         games: {}
     })
     dataMem.deleteGroup(newGroupID)
@@ -50,10 +50,10 @@ test('Get group that does not exist', () => {
 })
 
 test('Get object from valid group', () => {
-    let newGroupID = dataMem.createGroup("New Group")
+    let newGroupID = dataMem.createGroup("New Group", "New Description")
     expect(dataMem.getGroup(newGroupID)).toStrictEqual({
-        'name': 'New Group',
-        description: '',
+        name: "New Group",
+        description: "New Description",
         games: {}
     })
     dataMem.deleteGroup(newGroupID)
@@ -61,13 +61,13 @@ test('Get object from valid group', () => {
 
 // changeGroupName
 test('Change group name if new name is empty', () => {
-    let groupID = dataMem.createGroup("Old Group")
+    let groupID = dataMem.createGroup("Old Group", "New Description")
     try {
         dataMem.changeGroupName(groupID, "")
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_INVALID_GROUP_NAME.code)
     }
-    dataMem.deleteGroup(newGroupID)
+    dataMem.deleteGroup(groupID)
 })
 
 test('Change group name if new name is not empty', () => {
@@ -95,11 +95,11 @@ test('Try to delete a non existing group', () => {
 })
 
 test('Delete an existing group', () => {
-    let newGroupID = dataMem.createGroup("New Group")
+    let newGroupID = dataMem.createGroup("New Group", "New Description")
     let searchGroup = dataMem.getGroup(newGroupID)
     expect(searchGroup).toStrictEqual({
         name: "New Group",
-        description: '',
+        description: "New Description",
         games: {}
     })
     dataMem.deleteGroup(newGroupID)
@@ -114,7 +114,7 @@ test('Delete an existing group', () => {
 // addGroupGame
 
 test('Add duplicate game to a group', () => {
-    let newGroupID = dataMem.createGroup("New Group")
+    let newGroupID = dataMem.createGroup("New Group", "New Description")
     dataMem.addGroupGame(newGroupID, 'sdabasdj834238')
     try {
         dataMem.addGroupGame(newGroupID, 'sdabasdj834238')
@@ -133,16 +133,47 @@ test('Add game to a unexisting group', () => {
 })
 
 test('Add game to a valid group', () => {
-    let newGroupID = dataMem.createGroup("New Group")
-    expect(dataMem.addGroupGame(newGroupID, "jhadHUIA")).toBe("jhadHUIA")
+    let newGroupID = dataMem.createGroup("New Group", "New Description")
+    expect(dataMem.addGroupGame(newGroupID, {
+        id: 'jhadHUIA',
+        name : 'SomeName'
+    })).toBe('jhadHUIA')
     dataMem.deleteGroup(newGroupID)
 })
 
-// getGroupGames
-test('Get games from unexisting group', () => {
+// getGroupGameNames
+test('Get game names from unexisting group', () => {
     try {
-        dataMem.getGroupGames(1234)
+        dataMem.getGroupGameNames(1234)
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST.code)
     }
+})
+
+test('Get game names from valid group', () => {
+    let groupID = dataMem.createGroup("New Group", "New Description")
+    dataMem.addGroupGame(groupID, {
+        'id': 'jhadHUIA',
+        'name': "First"
+    })
+    dataMem.addGroupGame(groupID, {
+        'id': 'jhsdadHUIA',
+        'name': "Second"
+    })
+    expect(JSON.stringify(dataMem.getGroupGameNames(groupID))).toBe(JSON.stringify(["First", "Second"]))
+    dataMem.deleteGroup(groupID)
+})
+
+// deleteGroupGame
+test('Delete Group Game from valid group', () => {
+    let groupID = dataMem.createGroup("New Group", "New Description")
+    let game = {
+        'id': 'jhadHUIA',
+        'name': "First"
+    }
+    dataMem.addGroupGame(groupID, game)
+    expect(dataMem.groupHasGame(groupID, game.id)).toBe(true)
+    dataMem.deleteGroupGame(groupID, game.id)
+    expect(dataMem.groupHasGame(groupID, game)).toBe(false)
+    dataMem.deleteGroup(groupID)
 })
