@@ -56,6 +56,10 @@ module.exports = {
         code: 208,
         message: 'Although group exists and this game is not a duplicate, could not add it to group'
     },
+    DATA_MEM_INVALID_GROUP_DESCRIPTION : {
+        code: 209,
+        message: 'Invalid group description'
+    },
     WEB_API_INVALID_QUERY: {
         code: 209,
         message: 'Invalid query'
