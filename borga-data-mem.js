@@ -142,7 +142,7 @@ function deleteGroupGame(group_ID, game_ID) {
     if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
     groups[group_id].games[new_game.id] = new_game
-    if (!groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP; else return new_game.ID
+    if (!groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP; else return new_game.id
 }
 
 /**
@@ -169,5 +169,6 @@ module.exports = {
     // Group Games functions
     deleteGroupGame : deleteGroupGame,
     addGroupGame : addGroupGame,
-    getGroupGameNames : getGroupGameNames
+    getGroupGameNames : getGroupGameNames,
+    groupHasGame: groupHasGame
 }
