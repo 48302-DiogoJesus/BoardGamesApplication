@@ -3,7 +3,33 @@
 const error = require('./borga-errors')
 
 // Groups structure \\
-var groups = {}
+// Just an Example
+var groups = {
+    1 : {
+        name : 'A Group', 
+        description: 'A description of the group',
+        games: {
+            'JASDH79sd': {
+                id : 'JASDH79sd', 
+                name: 'Root',
+                url: 'http://www.google.com', 
+                price: '45.4'
+            },
+            'KLFGJK8': {
+                id : 'KLFGJK8', 
+                name: 'Something',
+                url: 'http://www.facebook.com', 
+                price: '25.4'
+            }
+        }
+    }
+}
+
+// Quickly Test functions inside this modules
+async function test() {
+    
+}
+test()
 
 /**
  * Checks if group exists 
@@ -17,12 +43,17 @@ function groupExists(group_ID){
 /**
  * Checks if group has a Game by its ID
  * @param {group_ID} Group ID
- * @param {game_ID} Game ID
- * @returns true if group has that [game_id] or false if not
+ * @param {search_game_id} Game id to search for
+ * @returns true if any game inside group has that [game_id] or false if not
  */
-function groupHasGame(group_ID, game_ID) {
-    if (!groupExists(group_ID)) return false
-    if (groups[group_ID].games.includes(game_ID)) return true; else return false
+function groupHasGame(group_id, search_game_id) {
+    if (!groupExists(group_id)) return false
+    for (let curr_game_id of Object.keys(groups[group_id].games)) {
+        console.log(curr_game_id)
+        console.log(search_game_id)
+        if (curr_game_id == search_game_id) return true
+    }
+    return false
 }
 
 /**
@@ -40,6 +71,20 @@ function changeGroupName(group_ID, new_name){
 }
 
 /**
+ * Changes a Group description
+ * @param {group_ID} Group ID
+ * @param {new_description} New description for that group
+ * @returns [new_description] if description is changes successfuly
+ */
+function changeGroupDescription(group_ID, new_description) {
+    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    const group = groups[group_ID]
+    if (new_description === '') throw error.DATA_MEM_INVALID_GROUP_DESCRIPTION
+    group.description = new_description
+    return new_description
+}
+
+/**
  * Get a group object
  * @param {group_id} Group ID
  * @returns the group object identified by group_id
@@ -54,12 +99,14 @@ function getGroup(group_ID) {
  * @param {group_name} New group name
  * @returns the id of the group if it is created successfuly
  */
-function createGroup(group_name){
+function createGroup(group_name, group_description){
     if (group_name === "") throw error.DATA_MEM_INVALID_GROUP_NAME
+    if (group_description === "") throw error.DATA_MEM_INVALID_GROUP_DESCRIPTION
     let newID = Object.keys(groups).length + 1
     groups[newID] = {
         'name' : group_name,
-        'games' : []
+        'description': group_description,
+        'games' : {}
     }
     return newID
 }
@@ -86,32 +133,36 @@ function deleteGroupGame(group_ID, game_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (!groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
     // Remove game from games list
-    const index = groups[group_ID].games.indexOf(game_ID);
-    if (index > -1) groups[group_ID].games.splice(index, 1)
+    delete groups[group_ID].games[game_ID];
     if (groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
 }
 
 /**
  * Add a Game to a Group
- * @param {group_ID} Group ID
- * @param {new_game_ID} New Game ID
+ * @param {group_id} Group ID
+ * @param {new_game} New Game object
  * @returns [new_game_ID] if game is successfuly added to group
  */
- function addGroupGame(group_ID, new_game_ID) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    if (groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
-    groups[group_ID].games.push(new_game_ID)
-    if (!groupHasGame(group_ID, new_game_ID)) throw error.DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP; else return new_game_ID
+ function addGroupGame(group_id, new_game) {
+    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
+    groups[group_id].games[new_game.id] = new_game
+    if (!groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP; else return new_game.ID
 }
 
 /**
  * Get a list of all Group Games
- * @param {group_ID} Group ID
+ * @param {group_id} Group ID
  * @returns list with all games from that group
  */
-function getGroupGames(group_ID) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    return groups[group_ID].games
+function getGroupGameNames(group_id) {
+    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    let gamesGroup = []
+    let originalGroupGames = groups[group_id].games
+    for (let game_id of Object.keys(originalGroupGames)) {
+        gamesGroup.push(originalGroupGames[game_id].name)
+    }
+    return gamesGroup
 }
 
 module.exports = {
@@ -123,5 +174,5 @@ module.exports = {
     // Group Games functions
     deleteGroupGame : deleteGroupGame,
     addGroupGame : addGroupGame,
-    getGroupGames : getGroupGames
+    getGroupGameNames : getGroupGameNames
 }
