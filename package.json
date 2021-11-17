@@ -8,7 +8,6 @@
   },
   "scripts": {
     "start": "node ./borga-server.js",
-    "board-games-data": "node ./board-games-data.js",
     "all-tests": "jest"
   },
   "author": "",

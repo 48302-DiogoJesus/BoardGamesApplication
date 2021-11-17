@@ -2,6 +2,13 @@
 
 // All known errors are contained inside this object
 module.exports = {
+    GLOBAL_UNKNOWN_ERROR: (info) => {
+        return {
+            code: 0,
+            message: 'Unknown error',
+            details: info
+        }
+    },
     BGATLAS_UNAVAILABLE: {
         code: 101,
         message: 'Board Game Altas API is currently offline'
