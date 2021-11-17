@@ -35,8 +35,9 @@ module.exports = function (services) {
 	/* GAMES RELATED FUNCTIONS */
 	// Group of functions to handle queries related to games functionality
     const validGamesQueries = {
-		top : getTopN,
-		id : getGameById
+		top : getTopNGames,
+		id : getGameById,
+		name : getGamesByName
 	}
 
 	/**
@@ -64,7 +65,7 @@ module.exports = function (services) {
 	 * @param {id} Game ID 
 	 * @param {req} request object 
 	 * @param {res} response object
-	 * @returns reponse with game object or throws exception if game with [id] does not exist
+	 * Responds with game object or throws exception if game with [id] does not exist
 	 */
 	async function getGameById(id, req, res) {
 		try {
@@ -80,12 +81,28 @@ module.exports = function (services) {
 	 * @param {n} limit of elements to search for in the top of popularity
 	 * @param {req} request object 
 	 * @param {res} response object
-	 * @returns reponse with top n popular games list or throws unknown exceptions
+	 * Responds  with top n popular games list or throws unknown exceptions
 	 */
-	async function getTopN(n, req, res) {
+	async function getTopNGames(n, req, res) {
 		try {	
-			let gamesList = await services.getPopularGamesList(n)
-			res.json(gamesList)
+			let popularGamesList = await services.getPopularGamesList(n)
+			res.json(popularGamesList)
+		} catch (err) {
+			handleError(err, req, res)
+		}
+	}
+
+	/**
+	 * Get Games List by Name
+	 * @param {name} name 
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with a list of all the games found by searching external Games API for [name]
+	 */
+	async function getGamesByName(name, req, res) {
+		try {
+			let searchList = await services.getGamesListByName(name)
+			res.json(searchList)
 		} catch (err) {
 			handleError(err, req, res)
 		}
