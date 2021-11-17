@@ -21,6 +21,12 @@ const COMMANDS = {
     search_game_name:`${BOARD_GAMES_URI}name=`
 }
 
+// Quickly Test functions inside this modules
+async function test() {
+
+}
+test()
+
 // AUXILIARY FUNCTIONS \\
 
 /**
