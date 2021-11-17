@@ -34,7 +34,8 @@ test('Create group with valid name', () => {
     let newGroupID = dataMem.createGroup("New Valid Group Name")
     expect(dataMem.getGroup(newGroupID)).toStrictEqual({
         name: "New Valid Group Name",
-        games: []
+        description: '',
+        games: {}
     })
     dataMem.deleteGroup(newGroupID)
 })
@@ -52,7 +53,8 @@ test('Get object from valid group', () => {
     let newGroupID = dataMem.createGroup("New Group")
     expect(dataMem.getGroup(newGroupID)).toStrictEqual({
         'name': 'New Group',
-        games: []
+        description: '',
+        games: {}
     })
     dataMem.deleteGroup(newGroupID)
 })
@@ -97,7 +99,8 @@ test('Delete an existing group', () => {
     let searchGroup = dataMem.getGroup(newGroupID)
     expect(searchGroup).toStrictEqual({
         name: "New Group",
-        games: []
+        description: '',
+        games: {}
     })
     dataMem.deleteGroup(newGroupID)
     try {
