@@ -20,7 +20,7 @@ module.exports = {
     BGATLAS_NOT_FOUND: {
         code: 103,
         http_code: 404,
-        message: 'Invalid Board Game Atlas ID'
+        message: 'Invalid Board Game Atlas Game'
     },
     DATA_MEM_GROUP_DOES_NOT_EXIST: {
         code: 201,
