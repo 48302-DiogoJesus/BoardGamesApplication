@@ -60,6 +60,7 @@ async function isAvailable() {
  */
 function buildGame(game) {
     return {
+        id: game.id,
         name: game.name,
         url: game.url,
         price: game.price_text,
@@ -111,7 +112,7 @@ async function getPopularGamesList(n) {
         if (games == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
         // Extract the Top n Games
         return buildGames(games.slice(0,n))
-    })
+    }).catch(err => {throw error.GLOBAL_UNKNOWN_ERROR(err)})
 }
 
 /**
@@ -125,7 +126,7 @@ async function getGameById(id) {
             if (data.count == 0) throw error.BGATLAS_NOT_FOUND
             let game = data.games[0]
             return buildGame(game)
-        })
+        }).catch(_ => {throw error.BGATLAS_NOT_FOUND})
 }
 
 /**
@@ -140,7 +141,7 @@ async function getGamesListByName(name) {
         if (data.count == 0) throw error.BGATLAS_NOT_FOUND
         let games = data.games
         return buildGames(games.slice(0, data.count))
-    })
+    }).catch(_ => {throw error.BGATLAS_NOT_FOUND})
 }
 
 module.exports = {
