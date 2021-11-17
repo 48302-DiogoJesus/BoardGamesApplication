@@ -19,10 +19,12 @@ module.exports = {
     },
     BGATLAS_NOT_FOUND: {
         code: 103,
+        http_code: 404,
         message: 'Invalid Board Game Atlas ID'
     },
     DATA_MEM_GROUP_DOES_NOT_EXIST: {
         code: 201,
+        http_code: 404,
         message: 'Group does not exist' 
     },
     DATA_MEM_GROUP_ALREADY_EXISTS: {
@@ -35,6 +37,7 @@ module.exports = {
     },
     DATA_MEM_GROUP_DOES_NOT_HAVE_GAME: {
         code: 204,
+        http_code: 404,
         message: 'Group does not have that game'
     },
     DATA_MEM_GAME_NOT_DELETED_FROM_GROUP: {
@@ -52,5 +55,9 @@ module.exports = {
     DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP: {
         code: 208,
         message: 'Although group exists and this game is not a duplicate, could not add it to group'
+    },
+    WEB_API_INVALID_QUERY: {
+        code: 209,
+        message: 'Invalid query'
     }
 };
