@@ -1,8 +1,9 @@
 'use strict'
 const express = require('express');
+const error = require('./borga-errors')
 
 module.exports = function (services) {
-	
+
 	function onError(req, res, err) {
 		switch (err.name) {
 			case 'NOT_FOUND': 

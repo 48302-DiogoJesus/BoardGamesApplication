@@ -6,13 +6,6 @@ const error = require('./borga-errors')
 var groups = {}
 
 /**
- * Removes everything from the groups object for testability purposes
- */
- const cleanGroups = () => {
-    groups = {}
-}
-
-/**
  * Checks if group exists 
  * @param {group_ID} Group ID
  * @returns true if group exists or false if not
@@ -122,7 +115,6 @@ function getGroupGames(group_ID) {
 }
 
 module.exports = {
-    cleanGroups : cleanGroups,
     // Group functions
     changeGroupName : changeGroupName,
     createGroup : createGroup,
