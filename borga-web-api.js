@@ -4,7 +4,20 @@ const error = require('./borga-errors')
 
 module.exports = function (services) {
 
-	function onError(req, res, err) {
+	// Initialize express router
+	const router = express.Router();
+	// Add support for JSON inside express
+	router.use(express.json());
+
+	/**
+	 * Handle Web Api Errors and pass them to client
+	 * @param {err} error object thrown by other functions
+	 * @param {req} request object 
+	 * @param {res} response object
+	 */
+	function handleError(err, req, res) {
+		// Research most important http codes and add them to borga-errors \\
+		/*
 		switch (err.name) {
 			case 'NOT_FOUND': 
 				res.status(404);
@@ -15,36 +28,77 @@ module.exports = function (services) {
 			default:
 				res.status(500);				
 		}
+		*/
 		res.json({ cause: err });
 	}
     
-    const router = express.Router();
+	/* GAMES RELATED FUNCTIONS */
+	// Group of functions to handle queries related to games functionality
+    const validGamesQueries = {
+		top : getTopN,
+		id : getGameById
+	}
 
-	router.use(express.json());
-
-	function handleGamesQueries(req) {
-		switch(req.query) {
-
+	/**
+	 * Handle Games Queries (Ex: /games/search?id=yqR4PtpO8X)
+	 * Based on the first query key execute the corresponding function
+	 * and provide a response with JSON format
+	 * @param {req} request object 
+	 * @param {res} response object
+	 */
+	function handleGamesQueries(req, res) {
+		try {
+			// Extract first query key
+			let firstQuery = Object.keys(req.query)[0]
+			// If query is not recognized throw error
+			if (!Object.keys(validGamesQueries).includes(firstQuery)) throw error.WEB_API_INVALID_QUERY
+			// Call right function with parameter being req.query[top]
+			validGamesQueries[firstQuery](req.query[firstQuery], req, res)
+		} catch (err) {
+			handleError(err, req, res)
 		}
 	}
 
-	async function getTopN(req, res) {
-		res.json(await services.getPopularGamesList(req.query.top))
+	/**
+	 * Get Game ID
+	 * @param {id} Game ID 
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * @returns reponse with game object or throws exception if game with [id] does not exist
+	 */
+	async function getGameById(id, req, res) {
+		try {
+			let gameObject = await services.getGameById(id)
+			res.json(gameObject)
+		} catch (err) {
+			handleError(err, req, res)
+		}
+	}
+
+	/**
+	 * Get Game ID
+	 * @param {n} limit of elements to search for in the top of popularity
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * @returns reponse with top n popular games list or throws unknown exceptions
+	 */
+	async function getTopN(n, req, res) {
+		try {	
+			let gamesList = await services.getPopularGamesList(n)
+			res.json(gamesList)
+		} catch (err) {
+			handleError(err, req, res)
+		}
 	}
 	
-	// Resource: /global/books
-	router.get('/games/?top=56&abc=asdh', getTopN);
+
+	/* GROUPS RELATED FUNCTIONS */
 
 
-	/*
-	// Resource: /my/books
-	router.get('/my/books', getMyBooks);
-	router.post('/my/books', addMyBookById);
 
-	// Resource: /my/books/<bookId>
-	router.get('/my/books/:bookId', getMyBookById);
-	router.delete('/my/books/:bookId', deleteMyBookById);
-	*/
+	// PATHS HANDLING \\
+	// Resource: /games
+	router.get('/games/search', handleGamesQueries);
 
 	return router;
 };
