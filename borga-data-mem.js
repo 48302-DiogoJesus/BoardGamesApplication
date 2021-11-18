@@ -4,8 +4,11 @@ const error = require('./borga-errors')
 
 const users = {
     'sadjhKYDSAYDHkjhds' : {
-
         username : "Zé",
+        groups : [1, 3]
+    },
+    'saasdasddjhKYDSAYDHkjhds' : {
+        username : "Hneiruque",
         groups : [1, 3]
     }
 }
@@ -35,7 +38,7 @@ var groups = {
 
 // Quickly Test functions inside this modules
 async function test() {
-    
+
 }
 test()
 
@@ -168,52 +171,92 @@ function getGroupGameNames(group_id) {
     return gamesGroup
 }
 
-
+/**
+ * Checks if a user exists inside users by its ID
+ * @param {user_id} User ID 
+ * @returns true if user exists or false if not
+ */
 function userExists(user_id){
     return users[user_id] != null
 }
 
+/**
+ * Check if a user has a group by its ID
+ * @param {user_id} User ID
+ * @param {search_group_id} ID of the group to search for
+ * @returns true if user has that group or false if not
+ */
 function userHasGroup(user_id, search_group_id) {
     if (!userExists(user_id)) return false
     return users[user_id].groups[search_group_id] != null
 }
 
+/**
+ * Creates a new user 
+ * @param {username} Username for the new user to create 
+ * @returns user of the new ID if user is created successfuly or throws exception
+ */
 function createUser(username){
-
     if (username === "") throw error.DATA_MEM_INVALID_USERNAME
-    /*Tem de ser substituido por UUID */
+    /* Tem de ser substituido por UUID */
     let newID = Object.keys(users).length + 1
     users[newID] = {
         'username' : username,
         'groups' : []
     }
-    if (userExists(newID)) return newID; else return false
+    if (userExists(newID)) return newID; else return error.DATA_MEM_COULD_NOT_CREATE_USER
 }
 
-
+/**
+ * Deletes a user
+ * @param {user_id} User ID 
+ * @returns true if user is deleted successfuly or throws exception
+ */
 function deleteUser(user_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     delete users[user_id]
     // Make sure user got deleted
-    if (userExists(user_id)) throw error.DATA_MEM_USER_NOT_DELETED; else return true
+    if (userExists(user_id)) throw error.DATA_MEM_USER_COULD_NOT_BE_DELETED; else return true
 }
 
+/**
+ * Get a list of all user names
+ * @returns a list with all user names
+ */
+function getUsers() {
+    return Object.keys(users).map(user_id => {
+        return users[user_id].username
+    })
+}
 
-function getUsers(user_id){
+/**
+ * Gets a user object identified by an ID
+ * @param {user_id} User ID 
+ * @returns the user object
+ */
+function getUser(user_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     return users[user_id]
 }
 
+/**
+ * Associate a group to a user
+ * @param {user_id} User ID
+ * @param {new_group} New group
+ */
 function addGroupToUser(user_id, new_group){
-
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (userHasGroup(user_id, new_group.id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
     users[user_id].groups[new_group.id] = new_group
-    if (!userHasGroup(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return new_group.id
-
-
+    if (!userHasGroup(new_group.id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return new_group.id
 }
 
+/**
+ * Deletes a group from a user
+ * @param {user_id} user_id 
+ * @param {group_id} group_id 
+ * @returns true if group is disassociated from user
+ */
 function deleteGroupFromUser(user_id, group_id) {
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (!userHasGroup(user_id,group_id)) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
@@ -229,9 +272,15 @@ module.exports = {
     createGroup : createGroup,
     deleteGroup : deleteGroup,
     getGroup : getGroup,
-    // Group Games functions
+
     deleteGroupGame : deleteGroupGame,
     addGroupGame : addGroupGame,
     getGroupGameNames : getGroupGameNames,
-    groupHasGame: groupHasGame
+    groupHasGame: groupHasGame,
+    // User functions
+    createUser: createUser,
+    deleteUser : deleteUser,
+    getUser : getUser,
+    addGroupToUser : addGroupToUser,
+    deleteGroupFromUser : deleteGroupFromUser
 }
