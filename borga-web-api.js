@@ -156,13 +156,11 @@ module.exports = function (services) {
 		} 
 	}
 
-	async function handleGetGroupDetail(req, res){
-
+	async function handleGetGroupById(req, res){
 		try{
-			let id = req.param.id 
+			let id = req.params.id 
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
-			res.json(await services.getGroupDetail(id))  
-
+			res.json(await services.getGroupDetails(id))
 		}
 		catch(err){
 			handleError(err,req,res)
@@ -201,7 +199,7 @@ module.exports = function (services) {
 
 	// Resource: /groups
 	router.get('/groups', handleGetGroups)
-	// router.get('/groups/:id', handleGetGroup)
+	router.get('/groups/:id', handleGetGroupById)
 	router.post('/groups/', handleCreateGroup)
 	router.delete('/groups/:id', handleDeleteGroup)
 	router.put('/groups/', handleEditGroup)
