@@ -15,6 +15,11 @@ module.exports = function (games_data, data_mem) {
     	createGroup : data_mem.createGroup,
 	
     	deleteGroup : data_mem.deleteGroup,
+<<<<<<< HEAD
+=======
+    	getGroup : data_mem.getGroup,
+		getGroups : data_mem.getGroups,
+>>>>>>> 9e6c53c50c04ec83cbf074e406b4af310259a584
     	deleteGroupGame : data_mem.deleteGroupGame,
     	addGroupGame : data_mem.addGroupGame,
 
@@ -29,6 +34,7 @@ module.exports = function (games_data, data_mem) {
 		deleteUser : data_mem.deleteUser,
 		getUser : data_mem.getUser,
 		addGroupToUser : data_mem.addGroupToUser,
-		deleteGroupFromUser : data_mem.deleteGroupFromUser
+		deleteGroupFromUser : data_mem.deleteGroupFromUser,
+		getUserGroups : data_mem.getUserGroups
 	};
 }
