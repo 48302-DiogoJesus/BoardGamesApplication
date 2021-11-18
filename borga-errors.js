@@ -60,8 +60,16 @@ module.exports = {
         code: 209,
         message: 'Invalid group description'
     },
+    DATA_MEM_COULD_NOT_CREATE_GROUP : {
+        code: 210,
+        message: 'Could not create group'
+    },
     WEB_API_INVALID_QUERY: {
-        code: 209,
+        code: 301,
         message: 'Invalid query'
+    },
+    WEB_API_INVALID_GROUP_DETAILS: {
+        code: 302,
+        message: 'Invalid group details'
     }
 };
