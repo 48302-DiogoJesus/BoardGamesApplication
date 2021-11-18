@@ -71,5 +71,9 @@ module.exports = {
     WEB_API_INVALID_GROUP_DETAILS: {
         code: 302,
         message: 'Invalid group details'
+    },
+    WEB_API_INSUFICIENT_GROUP_INFORMATION: {
+        code: 303,
+        messge: 'Insuficient group information'
     }
 };
