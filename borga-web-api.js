@@ -165,11 +165,8 @@ module.exports = function (services) {
 
 		}
 		catch(err){
-			console.log(err)
 			handleError(err,req,res)
 		}
-
-
 	}
 
 	async function handleGetGroups(req, res) {
