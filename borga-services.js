@@ -11,11 +11,13 @@ module.exports = function (games_data, data_mem) {
 		getPopularGamesList : games_data.getPopularGamesList,
 		// DATA MEM RELATED FUNCTIONS
 		changeGroupName : data_mem.changeGroupName,
+		changeGroupDescription : data_mem.changeGroupDescription,
     	createGroup : data_mem.createGroup,
     	deleteGroup : data_mem.deleteGroup,
     	getGroup : data_mem.getGroup,
     	deleteGroupGame : data_mem.deleteGroupGame,
     	addGroupGame : data_mem.addGroupGame,
-    	getGroupGames : data_mem.getGroupGames
+    	getGroupGames : data_mem.getGroupGames,
+		groupHasGame : data_mem.groupHasGame
 	};
 }
