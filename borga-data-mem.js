@@ -1,13 +1,15 @@
 'use strict'
 
 const error = require('./borga-errors')
-/*
+
 const users = {
     'sadjhKYDSAYDHkjhds' : {
-        groups : []
+
+        username : "Zé",
+        groups : [1, 3]
     }
 }
-*/
+
 // Groups structure \\
 // Just an Example
 var groups = {
@@ -164,6 +166,60 @@ function getGroupGameNames(group_id) {
         gamesGroup.push(originalGroupGames[game_id].name)
     }
     return gamesGroup
+}
+
+
+function userExists(user_id){
+    return users[user_id] != null
+}
+
+function userHasGroup(user_id, search_group_id) {
+    if (!userExists(user_id)) return false
+    return users[user_id].groups[search_group_id] != null
+}
+
+function createUser(username){
+
+    if (username === "") throw error.DATA_MEM_INVALID_USERNAME
+    /*Tem de ser substituido por UUID */
+    let newID = Object.keys(users).length + 1
+    users[newID] = {
+        'username' : username,
+        'groups' : []
+    }
+    if (userExists(newID)) return newID; else return false
+}
+
+
+function deleteUser(user_id){
+    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    delete users[user_id]
+    // Make sure user got deleted
+    if (userExists(user_id)) throw error.DATA_MEM_USER_NOT_DELETED; else return true
+}
+
+
+function getUsers(user_id){
+    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    return users[user_id]
+}
+
+function addGroupToUser(user_id, new_group){
+
+    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    if (userHasGroup(user_id, new_group.id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
+    users[user_id].groups[new_group.id] = new_group
+    if (!userHasGroup(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return new_group.id
+
+
+}
+
+function deleteGroupFromUser(user_id, group_id) {
+    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    if (!userHasGroup(user_id,group_id)) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
+    // Remove group from users list
+    delete users[user_id].groups[group_id];
+    if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return true
 }
 
 module.exports = {
