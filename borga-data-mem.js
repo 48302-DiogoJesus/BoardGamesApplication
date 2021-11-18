@@ -1,12 +1,18 @@
 'use strict'
 
 const error = require('./borga-errors')
-
+/*
+const users = {
+    'sadjhKYDSAYDHkjhds' : {
+        groups : []
+    }
+}
+*/
 // Groups structure \\
 // Just an Example
 var groups = {
     1 : {
-        name : 'A Group', 
+        name : 'A Group',
         description: 'A description of the group',
         games: {
             'JASDH79sd': {
@@ -37,7 +43,7 @@ test()
  * @returns true if group exists or false if not
  */
 function groupExists(group_ID){
-    if(groups[group_ID] != null) return true; else return false
+    return groups[group_ID] != null
 }
 
 /**
@@ -103,7 +109,7 @@ function createGroup(group_name, group_description){
         'description': group_description,
         'games' : {}
     }
-    return newID
+    if (groupExists(newID)) return newID; else return false
 }
 
 /**
@@ -163,6 +169,7 @@ function getGroupGameNames(group_id) {
 module.exports = {
     // Group functions
     changeGroupName : changeGroupName,
+    changeGroupDescription : changeGroupDescription,
     createGroup : createGroup,
     deleteGroup : deleteGroup,
     getGroup : getGroup,
