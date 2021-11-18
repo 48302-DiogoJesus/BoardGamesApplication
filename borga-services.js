@@ -1,8 +1,5 @@
 'use strict';
 
-// Dependencies
-require('dotenv').config();
-
 module.exports = function (games_data, data_mem) {
 
 	// Juntar external e internal e exportar
