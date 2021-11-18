@@ -111,11 +111,22 @@ module.exports = function (services) {
 
 	/* GROUPS RELATED FUNCTIONS */
 
-
+	async function handleCreateGroup(req, res) {
+		let newGroupName = req.body.name
+		let newGroupDescription = req.body.description
+		if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
+		let groupID = await services.createGroup(newGroupName, newGroupDescription)
+		// Add [groupID] to user.groups array ->[[groupdID,groupName],[]]
+		res.json({
+			id : groupID
+		})
+	}
 
 	// PATHS HANDLING \\
 	// Resource: /games
 	router.get('/games/search', handleGamesQueries);
 
+	// Resource: /groups
+	router.post('/groups/', handleCreateGroup)
 	return router;
 };
