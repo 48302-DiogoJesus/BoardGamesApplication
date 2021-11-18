@@ -172,9 +172,6 @@ module.exports = function (services) {
 
 	}
 
-	/*-----------------user related--------------------*/
-
-
 	async function handleGetGroups(req, res) {
 		try {
 			let groups = await services.getGroups()
@@ -206,13 +203,8 @@ module.exports = function (services) {
 	router.get('/games/search', handleGamesQueries);
 
 	// Resource: /groups
-<<<<<<< HEAD
 	router.get('/groups', handleGetGroups)
 	// router.get('/groups/:id', handleGetGroup)
-=======
-	router.get('/groups/:id/', handleGetGroupDetail)
-	router.get('/groups/', handleGetGroups)
->>>>>>> e309e36bb79bf2c10267b08e8628ccfc2ed70e91
 	router.post('/groups/', handleCreateGroup)
 	router.delete('/groups/:id', handleDeleteGroup)
 	router.put('/groups/', handleEditGroup)
