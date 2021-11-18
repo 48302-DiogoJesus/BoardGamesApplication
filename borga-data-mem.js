@@ -105,23 +105,16 @@ function changeGroupDescription(group_ID, new_description) {
  */
 function getGroup(group_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    return getGroupDetails(groups[group_ID])
+    return groups[group_ID]
 }  
 /**
  * Get all groups
  */
  function getGroups() {
-    return Object.values(groups).map(group => {
-        return getGroupDetails(group)
+    return Object.keys(groups).map(group_id => {
+        return getGroupDetails(group_id)
     })
-}
-
-/**
- * Get all groups
- */
- function getGroups() {
-    return Object.values(groups)
-}
+ }
 
 /**
  * Creates new group
@@ -196,9 +189,11 @@ function getGroupGameNames(group_id) {
 }
 
 function getGroupDetails(group_ID){
+    
     if(!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
+    
     let current_group = getGroup(group_ID) 
-
+    
     let array_games = getGroupGameNames(group_ID) 
 
     return { name: current_group.name, 
