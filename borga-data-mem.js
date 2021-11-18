@@ -99,7 +99,15 @@ function changeGroupDescription(group_ID, new_description) {
  */
 function getGroup(group_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    return groups[group_ID]
+    return getGroupDetails(groups[group_ID])
+}  
+/**
+ * Get all groups
+ */
+ function getGroups() {
+    return Object.values(groups).map(group => {
+        return getGroupDetails(group)
+    })
 }
 
 /**
@@ -170,7 +178,20 @@ function getGroupGameNames(group_id) {
     for (let game_id of Object.keys(originalGroupGames)) {
         gamesGroup.push(originalGroupGames[game_id].name)
     }
-    return gamesGroup
+    return gamesGroup 
+
+}
+
+function getGroupDetails(group_ID){
+    if(!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
+    let current_group = getGroup(group_ID) 
+
+    let array_games = getGroupGameNames(group_ID) 
+
+    return { name: current_group.name, 
+            description: current_group.description, 
+            games: array_games }
+
 }
 /*---------------------- User functions ------------------------*/ 
 /**
@@ -274,12 +295,18 @@ module.exports = {
     changeGroupDescription : changeGroupDescription,
     createGroup : createGroup,
     deleteGroup : deleteGroup,
+    
     getGroup : getGroup,
+    getGroups : getGroups,
 
     deleteGroupGame : deleteGroupGame,
     addGroupGame : addGroupGame,
     getGroupGameNames : getGroupGameNames,
-    groupHasGame: groupHasGame,
+    groupHasGame: groupHasGame, 
+
+    getGroupDetails: getGroupDetails, 
+
+
     // User functions
     createUser: createUser,
     deleteUser : deleteUser,
