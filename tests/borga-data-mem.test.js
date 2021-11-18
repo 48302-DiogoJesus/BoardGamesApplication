@@ -6,7 +6,7 @@ const error = require('../borga-errors')
 test('Description of the test here', () => {
 
     Examples to validate THIS test: 
-    expect(test value).toBe(null)
+    expect(test_value).toBe(null)
     or
     expect(test value).toStrictEqual({
         'name' : 'New Name',
