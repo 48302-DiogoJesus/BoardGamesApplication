@@ -156,6 +156,25 @@ module.exports = function (services) {
 		} 
 	}
 
+	async function handleGetGroupDetail(req, res){
+
+		try{
+			let id = req.param.id 
+			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
+			res.json(await services.getGroupDetail(id))  
+
+		}
+		catch(err){
+			console.log(err)
+			handleError(err,req,res)
+		}
+
+
+	}
+
+	/*-----------------user related--------------------*/
+
+
 	async function handleGetGroups(req, res) {
 		try {
 			let groups = await services.getGroups()
@@ -181,13 +200,19 @@ module.exports = function (services) {
 	router.use('/docs', openApiUi.serve);
 	router.get('/docs', openApiUi.setup(openApiSpec));
 
+
 	// PATHS HANDLING \\
 	// Resource: /games
 	router.get('/games/search', handleGamesQueries);
 
 	// Resource: /groups
+<<<<<<< HEAD
 	router.get('/groups', handleGetGroups)
 	// router.get('/groups/:id', handleGetGroup)
+=======
+	router.get('/groups/:id/', handleGetGroupDetail)
+	router.get('/groups/', handleGetGroups)
+>>>>>>> e309e36bb79bf2c10267b08e8628ccfc2ed70e91
 	router.post('/groups/', handleCreateGroup)
 	router.delete('/groups/:id', handleDeleteGroup)
 	router.put('/groups/', handleEditGroup)
