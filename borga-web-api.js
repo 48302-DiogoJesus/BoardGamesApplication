@@ -2,6 +2,9 @@
 const express = require('express');
 const error = require('./borga-errors')
 
+const openApiUi = require('swagger-ui-express');
+const openApiSpec = require('./docs/borga-spec.json');
+
 module.exports = function (services) {
 
 	// Initialize express router
@@ -118,7 +121,7 @@ module.exports = function (services) {
 			if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
 			let groupID = await services.createGroup(newGroupName, newGroupDescription)
 			// Add [groupID] to user.groups array ->[[groupdID,groupName],[]]
-			res.status(200).json({
+			res.json({
 				id : groupID
 			})
 		} catch (err) {
@@ -148,20 +151,39 @@ module.exports = function (services) {
 			if (!newName && !newDescription) throw error.WEB_API_INVALID_GROUP_DETAILS
 			if (newName) await services.changeGroupName(id, newName)
 			if (newDescription) await services.changeGroupDescription(id, newDescription)
-			res.status(200).json(await services.getGroup(id))
+			res.json(await services.getGroup(id))
 		} catch (err) {
 			console.log(err)
 			handleError(err, req, res)
 		} 
 	}
 
+	async function handleGetGroups(req, res) {
+		try {
+			let groups = await services.getGroups()
+			res.json(groups)
+		} catch (err) {
+			handleError(err, req, res)
+		}
+	} 
+
+	// Serve the API documents
+	router.use('/docs', openApiUi.serve);
+	router.get('/docs', openApiUi.setup(openApiSpec));
+
 	// PATHS HANDLING \\
 	// Resource: /games
 	router.get('/games/search', handleGamesQueries);
 
 	// Resource: /groups
+	router.get('/groups', handleGetGroups)
 	router.post('/groups/', handleCreateGroup)
 	router.delete('/groups/', handleDeleteGroup)
 	router.put('/groups/', handleEditGroup)
+
+	// Resource: /my/groups
+
+	// Resource: /users
+
 	return router;
 };
