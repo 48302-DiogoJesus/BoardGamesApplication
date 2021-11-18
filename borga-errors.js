@@ -107,5 +107,9 @@ module.exports = {
     WEB_API_INSUFICIENT_GROUP_INFORMATION: {
         code: 303,
         messge: 'Insuficient group information'
+    },
+    WEB_API_INVALID_USER_NAME: {
+        code: 304,
+        message: 'Invalid user name'
     }
 };
