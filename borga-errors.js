@@ -64,6 +64,38 @@ module.exports = {
         code: 210,
         message: 'Could not create group'
     },
+    DATA_MEM_INVALID_USERNAME : {
+        code: 211,
+        message: 'Invalid user name'
+    },
+    DATA_MEM_COULD_NOT_CREATE_USER : {
+        code: 212,
+        message: 'Could not create user'
+    },
+    DATA_MEM_USER_DOES_NOT_EXIST: {
+        code: 213,
+        message: 'User does not exist'
+    },
+    DATA_MEM_USER_COULD_NOT_BE_DELETED: {
+        code: 214,
+        message: 'User could not be deleted'
+    },
+    DATA_MEM_USER_ALREADY_HAS_THIS_GROUP: {
+        code: 215,
+        message: 'Group already inside this user groups'
+    },
+    DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER: {
+        code: 216,
+        message: 'Could not add group to user'
+    },
+    DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP: {
+        code: 217,
+        message: 'This user does not have that group'
+    },
+    DATA_MEM_GROUP_NOT_DELETED_FROM_USER: {
+        code: 218,
+        message: 'Group was not deleted from user groups'
+    },
     WEB_API_INVALID_QUERY: {
         code: 301,
         message: 'Invalid query'
