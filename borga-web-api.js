@@ -105,12 +105,11 @@ module.exports = function (services) {
 	async function getGamesByName(name, req, res) {
 		try {
 			let searchList = await services.getGamesListByName(name)
-			res.json(searchList)
+			res.json({ searchList })
 		} catch (err) {
 			handleError(err, req, res)
 		}
 	}
-	
 
 	/* GROUPS RELATED FUNCTIONS */
 
@@ -131,11 +130,11 @@ module.exports = function (services) {
 
 	async function handleDeleteGroup(req, res) {
 		try {
-			let id = req.body.id
+			let id = req.params.id
 			if (!id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
-			if (!services.getGroup(id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 			let deleteStatus = await services.deleteGroup(id)
-			if (deleteStatus) res.status(200).send()
+			if (deleteStatus) res.sendStatus(200)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -144,16 +143,15 @@ module.exports = function (services) {
 	async function handleEditGroup(req, res) {
 		try {
 			let id = req.body.id 
-			if (!services.getGroup(id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 			let newName = req.body.name
 			let newDescription = req.body.description
 			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
 			if (!newName && !newDescription) throw error.WEB_API_INVALID_GROUP_DETAILS
 			if (newName) await services.changeGroupName(id, newName)
 			if (newDescription) await services.changeGroupDescription(id, newDescription)
-			res.json(await services.getGroup(id))
+			res.json( { id : await services.getGroup(id) } )
 		} catch (err) {
-			console.log(err)
 			handleError(err, req, res)
 		} 
 	}
@@ -161,11 +159,23 @@ module.exports = function (services) {
 	async function handleGetGroups(req, res) {
 		try {
 			let groups = await services.getGroups()
-			res.json(groups)
+			res.json({ groups })
 		} catch (err) {
 			handleError(err, req, res)
 		}
 	} 
+
+	async function handleCreateUser(req, res) {
+		try {	
+			let newUserName = req.body.username
+			if (!newUserName) throw error.WEB_API_INVALID_USER_NAME
+			let newUserID = await services.createUser(newUserName)
+			// Later return the UUID token here so that user can store it in local storage
+			res.json({ newUserID })
+		} catch (err) {
+			handleError(err, req, res)
+		}
+	}
 
 	// Serve the API documents
 	router.use('/docs', openApiUi.serve);
@@ -177,13 +187,17 @@ module.exports = function (services) {
 
 	// Resource: /groups
 	router.get('/groups', handleGetGroups)
+	// router.get('/groups/:id', handleGetGroup)
 	router.post('/groups/', handleCreateGroup)
-	router.delete('/groups/', handleDeleteGroup)
+	router.delete('/groups/:id', handleDeleteGroup)
 	router.put('/groups/', handleEditGroup)
 
-	// Resource: /my/groups
+	// Resource: '/groups/games'
+	// router.post('/groups/games', handleAddGroupGame)
+	// router.delete('/groups/games/:game_id', handleGetGroupGame)
 
 	// Resource: /users
+	router.post('/users/', handleCreateUser)
 
 	return router;
 };
