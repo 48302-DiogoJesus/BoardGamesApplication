@@ -2,20 +2,21 @@
 
 const error = require('./borga-errors')
 
-const users = {
-    'sadjhKYDSAYDHkjhds' : {
+// Users Structure \\
+// Example of a User:
+/* 
+'sadjhKYDSAYDHkjhds' : {
         username : "Zé",
-        groups : [1, 3]
-    },
-    'saasdasddjhKYDSAYDHkjhds' : {
-        username : "Hneiruque",
-        groups : [1, 3]
+        groups : [1, 33]
     }
+*/
+const users = {
+    
 }
 
 // Groups structure \\
-// Just an Example
-var groups = {
+// Example of a Group:
+/*
     1 : {
         name : 'A Group',
         description: 'A description of the group',
@@ -33,12 +34,17 @@ var groups = {
                 price: '25.4'
             }
         }
-    }
+    } => 
+        name : 'A Group',
+        description: 'A description of the group',
+        games: ['Something', 'Root']
+    */
+var groups = {
+    
 }
 
 // Quickly Test functions inside this modules
 async function test() {
-
 }
 test()
 
@@ -98,6 +104,13 @@ function changeGroupDescription(group_ID, new_description) {
 function getGroup(group_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     return groups[group_ID]
+}
+
+/**
+ * Get all groups
+ */
+ function getGroups() {
+    return Object.values(groups)
 }
 
 /**
@@ -265,6 +278,18 @@ function deleteGroupFromUser(user_id, group_id) {
     if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return true
 }
 
+/**
+ * Get all groups from a user
+ * @param {user_ID} User ID 
+ * @returns list with all groups [user_ID] is associated with
+ */
+function getUserGroups(user_ID) {
+    if (!userExists(user_ID)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    return users[user_ID].groups.map(group_id => {
+        if (groups[group_id] != undefined) return groups[group_id]
+    }).filter(it => it !== undefined)
+}
+
 module.exports = {
     // Group functions
     changeGroupName : changeGroupName,
@@ -272,6 +297,7 @@ module.exports = {
     createGroup : createGroup,
     deleteGroup : deleteGroup,
     getGroup : getGroup,
+    getGroups : getGroups,
 
     deleteGroupGame : deleteGroupGame,
     addGroupGame : addGroupGame,
@@ -282,5 +308,6 @@ module.exports = {
     deleteUser : deleteUser,
     getUser : getUser,
     addGroupToUser : addGroupToUser,
-    deleteGroupFromUser : deleteGroupFromUser
+    deleteGroupFromUser : deleteGroupFromUser,
+    getUserGroups : getUserGroups
 }
