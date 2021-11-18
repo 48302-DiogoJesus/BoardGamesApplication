@@ -112,14 +112,47 @@ module.exports = function (services) {
 	/* GROUPS RELATED FUNCTIONS */
 
 	async function handleCreateGroup(req, res) {
-		let newGroupName = req.body.name
-		let newGroupDescription = req.body.description
-		if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
-		let groupID = await services.createGroup(newGroupName, newGroupDescription)
-		// Add [groupID] to user.groups array ->[[groupdID,groupName],[]]
-		res.json({
-			id : groupID
-		})
+		try {
+			let newGroupName = req.body.name
+			let newGroupDescription = req.body.description
+			if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
+			let groupID = await services.createGroup(newGroupName, newGroupDescription)
+			// Add [groupID] to user.groups array ->[[groupdID,groupName],[]]
+			res.status(200).json({
+				id : groupID
+			})
+		} catch (err) {
+			handleError(err, req, res)
+		}
+	}
+
+	async function handleDeleteGroup(req, res) {
+		try {
+			let id = req.body.id
+			if (!id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
+			if (!services.getGroup(id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+			let deleteStatus = await services.deleteGroup(id)
+			if (deleteStatus) res.status(200).send()
+		} catch (err) {
+			handleError(err, req, res)
+		}
+	}
+
+	async function handleEditGroup(req, res) {
+		try {
+			let id = req.body.id 
+			if (!services.getGroup(id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+			let newName = req.body.name
+			let newDescription = req.body.description
+			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
+			if (!newName && !newDescription) throw error.WEB_API_INVALID_GROUP_DETAILS
+			if (newName) await services.changeGroupName(id, newName)
+			if (newDescription) await services.changeGroupDescription(id, newDescription)
+			res.status(200).json(await services.getGroup(id))
+		} catch (err) {
+			console.log(err)
+			handleError(err, req, res)
+		} 
 	}
 
 	// PATHS HANDLING \\
@@ -128,5 +161,7 @@ module.exports = function (services) {
 
 	// Resource: /groups
 	router.post('/groups/', handleCreateGroup)
+	router.delete('/groups/', handleDeleteGroup)
+	router.put('/groups/', handleEditGroup)
 	return router;
 };
