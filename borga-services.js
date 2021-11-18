@@ -21,7 +21,7 @@ module.exports = function (games_data, data_mem) {
     	getGroupGames : data_mem.getGroupGames,
 		groupHasGame : data_mem.groupHasGame,
 		getGroup : data_mem.getGroup,
-		getGroupS : data_mem.getGroupS,
+		getGroups : data_mem.getGroups,
 		getGroupDetails: data_mem.getGroupDetails,
 
 		// USER RELATED FUNCTIONS
