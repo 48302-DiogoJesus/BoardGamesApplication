@@ -1,13 +1,7 @@
 'use strict'
 
 const error = require('./borga-errors')
-/*
-const users = {
-    'sadjhKYDSAYDHkjhds' : {
-        groups : []
-    }
-}
-*/
+
 // Groups structure \\
 // Just an Example
 var groups = {
