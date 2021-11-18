@@ -42,6 +42,8 @@ async function test() {
 }
 test()
 
+/*---------------------- Group functions ------------------------*/
+
 /**
  * Checks if group exists 
  * @param {group_ID} Group ID
@@ -170,7 +172,7 @@ function getGroupGameNames(group_id) {
     }
     return gamesGroup
 }
-
+/*---------------------- User functions ------------------------*/ 
 /**
  * Checks if a user exists inside users by its ID
  * @param {user_id} User ID 
@@ -188,7 +190,7 @@ function userExists(user_id){
  */
 function userHasGroup(user_id, search_group_id) {
     if (!userExists(user_id)) return false
-    return users[user_id].groups[search_group_id] != null
+    return users[user_id].groups.includes(search_group_id) 
 }
 
 /**
@@ -242,13 +244,13 @@ function getUser(user_id){
 /**
  * Associate a group to a user
  * @param {user_id} User ID
- * @param {new_group} New group
+ * @param {group_id} Id of group we are associating
  */
-function addGroupToUser(user_id, new_group){
+function addGroupToUser(user_id, group_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
-    if (userHasGroup(user_id, new_group.id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
-    users[user_id].groups[new_group.id] = new_group
-    if (!userHasGroup(new_group.id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return new_group.id
+    if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
+    users[user_id].groups.push(group_id) 
+    if (!userHasGroup(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return new_group.id//justo confirm the group was added
 }
 
 /**
@@ -260,8 +262,9 @@ function addGroupToUser(user_id, new_group){
 function deleteGroupFromUser(user_id, group_id) {
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (!userHasGroup(user_id,group_id)) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
-    // Remove group from users list
-    delete users[user_id].groups[group_id];
+    // Remove group from users list 
+    let user_groups = users[user_id].groups 
+    user_groups.splice(user_groups.indexOf(group_id), 1);
     if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return true
 }
 
