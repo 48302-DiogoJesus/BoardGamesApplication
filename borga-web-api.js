@@ -155,6 +155,10 @@ module.exports = function (services) {
 		} 
 	}
 
+
+	/*-----------------user related--------------------*/
+
+
 	// PATHS HANDLING \\
 	// Resource: /games
 	router.get('/games/search', handleGamesQueries);
