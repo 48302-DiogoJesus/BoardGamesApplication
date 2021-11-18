@@ -18,6 +18,11 @@ module.exports = function (games_data, data_mem) {
     	deleteGroupGame : data_mem.deleteGroupGame,
     	addGroupGame : data_mem.addGroupGame,
     	getGroupGames : data_mem.getGroupGames,
-		groupHasGame : data_mem.groupHasGame
+		groupHasGame : data_mem.groupHasGame,
+		createUser: data_mem.createUser,
+		deleteUser : data_mem.deleteUser,
+		getUser : data_mem.getUser,
+		addGroupToUser : data_mem.addGroupToUser,
+		deleteGroupFromUser : data_mem.deleteGroupFromUser
 	};
 }
