@@ -2,8 +2,8 @@
 const express = require('express');
 const error = require('./borga-errors')
 
-const openApiUi = require('swagger-ui-express');
-const openApiSpec = require('./docs/borga-spec.json');
+// const openApiUi = require('swagger-ui-express');
+// const openApiSpec = require('./docs/borga-spec.yaml');
 
 module.exports = function (services) {
 
@@ -189,8 +189,8 @@ module.exports = function (services) {
 	}
 
 	// Serve the API documents
-	router.use('/docs', openApiUi.serve);
-	router.get('/docs', openApiUi.setup(openApiSpec));
+	// router.use('/docs', openApiUi.serve);
+	// router.get('/docs', openApiUi.setup(openApiSpec));
 
 
 	// PATHS HANDLING \\
@@ -198,7 +198,7 @@ module.exports = function (services) {
 	router.get('/games/search', handleGamesQueries);
 
 	// Resource: /groups
-	router.get('/groups', handleGetGroups)
+	router.get('/groups/', handleGetGroups)
 	router.get('/groups/:id', handleGetGroupById)
 	router.post('/groups/', handleCreateGroup)
 	router.delete('/groups/:id', handleDeleteGroup)
