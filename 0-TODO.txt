@@ -1,0 +1,19 @@
+// DONT FORGET
+- Complete all http codes for errors inside "errors.js"
+- Complete all Postman tests and export collection as JSON to github 
+- Uncomment documentation lines in web-api (because yaml not working)
+
+// FINISH
+- Finish YAML OpenAPI file
+- Finish Implementing web api
+
+// NEW
+- User token in header implement with UUID:
+"For all group operations, a user token must be sent in the
+Authorization header using a Bearer Token. 
+This token is generated at user creation, and consists of a UUID
+string, obtained from the crypto.randomUUID() method."
+
+// TESTS
+- Make all tests be over the services file
+- Make the unit tests for the games-data not depend on Game Atlas
