@@ -74,6 +74,7 @@ module.exports = {
     },
     DATA_MEM_USER_DOES_NOT_EXIST: {
         code: 213,
+        http_code: 404,
         message: 'User does not exist'
     },
     DATA_MEM_USER_COULD_NOT_BE_DELETED: {
@@ -98,6 +99,7 @@ module.exports = {
     },
     WEB_API_INVALID_QUERY: {
         code: 301,
+        http_code: 400,
         message: 'Invalid query'
     },
     WEB_API_INVALID_GROUP_DETAILS: {
