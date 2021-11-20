@@ -176,22 +176,22 @@ module.exports = function (services) {
 	} 
 
 	async function handleAddGameToGroup(req,res){
-		try{ 
-			console.log(req.query.game_ID) 
-			console.log(req.params.id)  
+
+		try{
 
 			let gameToAdd_ID = req.query.game_ID  
 			
 			let group_ID = req.params.id
 			
-			let adding = services.addGametoGroup(group_ID, gameToAdd_ID) 
+			let updatedGroup = await services.addGameToGroup(group_ID, gameToAdd_ID) 
 			
-			console.log(adding)
 
-			res.json( adding )
-		}catch(err){} 
+			res.json(updatedGroup)
 
 
+		} catch (err) { 
+			handleError(err, req, res)
+		} 
 	} 
 
 	// Serve the API documents
@@ -212,7 +212,8 @@ module.exports = function (services) {
 
 	// Resource: '/groups/games'
 	router.post('/groups/:id/games',handleAddGameToGroup)
-	// router.delete('/groups/:id/games/:game_id', handleGetGroupGame)
+	//router.delete('/groups/:id/games', handleGetGroupGame)//use query to do it
+
 
 	// Resource: /users
 	router.post('/users/', handleCreateUser)
