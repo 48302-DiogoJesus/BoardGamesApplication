@@ -1,6 +1,7 @@
 'use strict'
 
 const error = require('./borga-errors')
+const crypto = require('crypto')
 
 // Users Structure \\
 // Example of a User:
@@ -230,11 +231,12 @@ function userHasGroup(user_id, search_group_id) {
 function createUser(username){
     if (username === "") throw error.DATA_MEM_INVALID_USERNAME
     /* Tem de ser substituido por UUID */
-    let newID = Object.keys(users).length + 1
+    let newID = crypto.randomUUID()
     users[newID] = {
         'username' : username,
         'groups' : []
     }
+    console.log(users)
     if (userExists(newID)) return newID; else return error.DATA_MEM_COULD_NOT_CREATE_USER
 }
 
@@ -279,7 +281,7 @@ function addGroupToUser(user_id, group_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
     users[user_id].groups.push(group_id) 
-    if (!userHasGroup(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return new_group.id//justo confirm the group was added
+    if (!userHasGroup(user_id, group_id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return group_id
 }
 
 /**
@@ -305,9 +307,17 @@ function deleteGroupFromUser(user_id, group_id) {
 function getUserGroups(user_ID) {
     if (!userExists(user_ID)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     return users[user_ID].groups.map(group_id => {
-        if (groups[group_id] != undefined) return groups[group_id]
-    }).filter(it => it !== undefined)
+        if (groupExists(group_id)) return groups[group_id]; else deleteGroupFromUser(user_ID, group_id); //remove groupExists and deleteGroupFromUser when function deleteUnexistingGroups is created 
+    })
+    //remove when function deleteUnexistingGroups is created
+    .filter(it => it !== undefined)
 }
+
+/*
+Create function to delete unexisting groups from all users
+
+Function deleteUnexistingGroups
+*/
 
 module.exports = {
     // Group functions
@@ -333,5 +343,6 @@ module.exports = {
     getUser : getUser,
     addGroupToUser : addGroupToUser,
     deleteGroupFromUser : deleteGroupFromUser,
-    getUserGroups : getUserGroups
+    getUserGroups : getUserGroups,
+    userHasGroup : userHasGroup
 }

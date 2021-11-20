@@ -1,0 +1,12 @@
+// DONT FORGET
+- Complete all http codes for errors inside "errors.js"
+- Complete all Postman tests and export collection as JSON to github 
+- Uncomment documentation lines in web-api (because yaml not working)
+
+// FINISH
+- Finish YAML OpenAPI file
+- Finish Implementing web api
+
+// TESTS
+- Make all tests be over the services file
+- Make the unit tests for the games-data not depend on Game Atlas

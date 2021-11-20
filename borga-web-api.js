@@ -2,8 +2,8 @@
 const express = require('express');
 const error = require('./borga-errors')
 
-const openApiUi = require('swagger-ui-express');
-const openApiSpec = require('./docs/borga-spec.json');
+// const openApiUi = require('swagger-ui-express');
+// const openApiSpec = require('./docs/borga-spec.yaml');
 
 module.exports = function (services) {
 
@@ -19,20 +19,7 @@ module.exports = function (services) {
 	 * @param {res} response object
 	 */
 	function handleError(err, req, res) {
-		// Research most important http codes and add them to borga-errors \\
-		/*
-		switch (err.name) {
-			case 'NOT_FOUND': 
-				res.status(404);
-				break;
-			case 'EXT_SVC_FAIL':
-				res.status(502);
-				break;
-			default:
-				res.status(500);				
-		}
-		*/
-		res.json({ cause: err });
+		res.status(err.http_code).json({ cause: err });
 	}
     
 	/* GAMES RELATED FUNCTIONS */
@@ -208,8 +195,8 @@ module.exports = function (services) {
 	} 
 
 	// Serve the API documents
-	router.use('/docs', openApiUi.serve);
-	router.get('/docs', openApiUi.setup(openApiSpec));
+	// router.use('/docs', openApiUi.serve);
+	// router.get('/docs', openApiUi.setup(openApiSpec));
 
 
 	// PATHS HANDLING \\
@@ -217,7 +204,7 @@ module.exports = function (services) {
 	router.get('/games', handleGamesQueries);
 
 	// Resource: /groups
-	router.get('/groups', handleGetGroups)
+	router.get('/groups/', handleGetGroups)
 	router.get('/groups/:id', handleGetGroupById)
 	router.post('/groups/', handleCreateGroup)
 	router.delete('/groups/:id', handleDeleteGroup)
