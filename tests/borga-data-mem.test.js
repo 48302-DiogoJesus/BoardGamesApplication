@@ -177,3 +177,69 @@ test('Delete Group Game from valid group', () => {
     expect(dataMem.groupHasGame(groupID, game)).toBe(false)
     dataMem.deleteGroup(groupID)
 })
+
+
+//Create User
+test('Create user', () => {
+    let newUserID = dataMem.createUser("Miguel")
+    expect(dataMem.getUser(newUserID)).toStrictEqual({
+        username : "Miguel",
+        groups : []
+
+    })
+    dataMem.deleteUser(newUserID)
+})
+
+
+//Delete User
+test('Delete an user', () => {
+    let newUserID = dataMem.createUser("Quim")
+    let getUser = dataMem.getUser(newUserID)
+    expect(getUser).toStrictEqual({
+        username : "Quim",
+        groups : []
+    })
+    dataMem.deleteUser(newUserID)
+    try {
+        dataMem.getUser(newUserID)
+    } catch (err) {
+        // Expect user to not exist anymore
+        expect(err.code).toBe(error.DATA_MEM_USER_DOES_NOT_EXIST.code)
+    }
+})
+
+
+//Associate a group to a user
+test('Add group to a user', () => {
+    let newUserID = dataMem.createUser("Manuel")
+    let getUser = dataMem.getUser(newUserID)
+    dataMem.addGroupToUser(newUserID, 1)
+    expect(getUser).toStrictEqual({
+        username : "Manuel",
+        groups : [1]
+    })
+    dataMem.deleteUser(newUserID)
+})
+
+
+
+//Delete group from a user
+test('Delete group from a user', () => {
+    let newUserID = dataMem.createUser("Manuel")
+    dataMem.addGroupToUser(newUserID, 1)
+    expect(dataMem.userHasGroup(newUserID, 1)).toBe(true)
+    dataMem.deleteGroupFromUser(newUserID, 1)
+    expect(dataMem.userHasGroup(newUserID, 1)).toBe(false)
+    dataMem.deleteUser(newUserID)
+
+})
+
+
+//Get Groups from Users
+test('Get groups id from users', () => {
+    let newUserID = dataMem.createUser("Manuel")
+    dataMem.addGroupToUser(newUserID, 1)
+    dataMem.addGroupToUser(newUserID, 2)
+    expect(JSON.stringify(dataMem.getUserGroups(newUserID))).toBe(JSON.stringify([1, 2]))
+    dataMem.deleteUser(newUserID)
+})
