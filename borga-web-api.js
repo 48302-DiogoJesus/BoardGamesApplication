@@ -1,6 +1,5 @@
 'use strict'
 const express = require('express');
-const { getGroupDetails } = require('./borga-data-mem');
 const error = require('./borga-errors')
 
 // const openApiUi = require('swagger-ui-express');
@@ -61,7 +60,7 @@ module.exports = function (services) {
 	async function getGameById(id, req, res) {
 		try {
 			let gameObject = await services.getGameById(id)
-			res.json(gameObject)
+			res.status(200).json(gameObject)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -77,7 +76,7 @@ module.exports = function (services) {
 	async function getTopNGames(n, req, res) {
 		try {	
 			let popularGamesList = await services.getPopularGamesList(n)
-			res.json(popularGamesList)
+			res.status(200).json(popularGamesList)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -93,7 +92,7 @@ module.exports = function (services) {
 	async function getGamesByName(name, req, res) {
 		try {
 			let searchList = await services.getGamesListByName(name)
-			res.json({ searchList })
+			res.status(200).json({ searchList })
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -108,7 +107,7 @@ module.exports = function (services) {
 			if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
 			let groupID = await services.createGroup(newGroupName, newGroupDescription)
 			// Add [groupID] to user.groups array ->[[groupdID,groupName],[]]
-			res.json({
+			res.status(201).json({
 				id : groupID
 			})
 		} catch (err) {
@@ -122,7 +121,7 @@ module.exports = function (services) {
 			if (!id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 			let deleteStatus = await services.deleteGroup(id)
-			if (deleteStatus) res.sendStatus(200)
+			if (deleteStatus) res.sendStatus(204)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -138,7 +137,7 @@ module.exports = function (services) {
 			if (!newName && !newDescription) throw error.WEB_API_INVALID_GROUP_DETAILS
 			if (newName) await services.changeGroupName(id, newName)
 			if (newDescription) await services.changeGroupDescription(id, newDescription)
-			res.json( { id : await services.getGroup(id) } )
+			res.status(204).json( { id : await services.getGroup(id) } )
 		} catch (err) {
 			handleError(err, req, res)
 		} 
@@ -148,7 +147,7 @@ module.exports = function (services) {
 		try{
 			let id = req.params.id 
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
-			res.json(await services.getGroupDetails(id))
+			res.status(200).json(await services.getGroupDetails(id))
 		}
 		catch(err){
 			handleError(err,req,res)
@@ -170,7 +169,7 @@ module.exports = function (services) {
 			if (!newUserName) throw error.WEB_API_INVALID_USER_NAME
 			let newUserID = await services.createUser(newUserName)
 			// Later return the UUID token here so that user can store it in local storage
-			res.status(204).status().json({ newUserID })
+			res.status(201).status().json({ newUserID })
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -184,7 +183,7 @@ module.exports = function (services) {
 			
 			let updatedGroup = await services.addGameToGroup(group_ID, new_game_id) 
 
-			res.status(204).json(updatedGroup)
+			res.status(201).json(updatedGroup)
 		} catch (err) { 
 			handleError(err, req, res)
 		} 
