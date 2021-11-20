@@ -46,6 +46,11 @@ var groups = {
 
 // Quickly Test functions inside this modules
 async function test() {
+    try {
+        
+    } catch (err) {
+
+    }
 }
 test()
 
@@ -305,18 +310,22 @@ function deleteGroupFromUser(user_id, group_id) {
  */
 function getUserGroups(user_ID) {
     if (!userExists(user_ID)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    deleteUnexistingGroups()
     return users[user_ID].groups.map(group_id => {
-        if (groupExists(group_id)) return groups[group_id]; else deleteGroupFromUser(user_ID, group_id); //remove groupExists and deleteGroupFromUser when function deleteUnexistingGroups is created 
+        return groups[group_id]
     })
-    //remove when function deleteUnexistingGroups is created
-    .filter(it => it !== undefined)
 }
 
-/*
-Create function to delete unexisting groups from all users
-
-Function deleteUnexistingGroups
-*/
+/**
+ * Delete unexisting groups from all users groups list
+ */
+function deleteUnexistingGroups() {
+    for (let user of Object.values(users)) {
+        user.groups = user.groups.map(group_id => {
+            if (groupExists(group_id)) return group_id
+        }).filter(group_id => group_id !== undefined)
+    }
+} 
 
 module.exports = {
     // Group functions

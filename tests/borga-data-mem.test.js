@@ -173,7 +173,7 @@ test('Delete Group Game from valid group', () => {
     }
     dataMem.addGroupGame(groupID, game)
     expect(dataMem.groupHasGame(groupID, game.id)).toBe(true)
-    dataMem.deleteGroupGame(groupID, game.id)
+    dataMem.deleteGameFromGroup(groupID, game.id)
     expect(dataMem.groupHasGame(groupID, game)).toBe(false)
     dataMem.deleteGroup(groupID)
 })
@@ -238,8 +238,16 @@ test('Delete group from a user', () => {
 //Get Groups from Users
 test('Get groups id from users', () => {
     let newUserID = dataMem.createUser("Filipino")
-    dataMem.addGroupToUser(newUserID, 1)
-    dataMem.addGroupToUser(newUserID, 2)
-    expect(JSON.stringify(dataMem.getUserGroups(newUserID))).toBe(JSON.stringify([1, 2]))
+    let newGroupID = dataMem.createGroup("Novo Grupo", "nova descrição")
+    let newGroupID2 = dataMem.createGroup("Novo Grupo 2", "nova descrição 2")
+    // Only two of the following are actual groups
+    dataMem.addGroupToUser(newUserID, newGroupID)
+    dataMem.addGroupToUser(newUserID, newGroupID2)
+    dataMem.addGroupToUser(newUserID, 33)
+    dataMem.addGroupToUser(newUserID, 90)
+    // Delete group created in previous line
+    // User will still have groups = [33, 90, 1, 2] even though 33 and 90 do not exist
+    // The function below will only return the existing groups and remove others from user groups
+    expect(dataMem.getUserGroups(newUserID).length).toBe(2)
     dataMem.deleteUser(newUserID)
 })
