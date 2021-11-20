@@ -1,10 +1,6 @@
 'use strict';
 
-const { getGroupDetails } = require("./borga-data-mem");
-
-
-
-module.exports = function (games_data, data_mem) {
+module.exports = function (data_ext, data_int) {
 
 	// Juntar external e internal e exportar
 
@@ -13,41 +9,41 @@ module.exports = function (games_data, data_mem) {
 		try {
             let gameToAdd = await games_data.getGameById(game_ID) 
             data_mem.addGroupGame(group_ID, gameToAdd) 
-			return getGroupDetails(group_ID)
+			return data_mem.getGroupDetails(group_ID)
         } catch (err) { return err }
     }
 	
 	/*---------------------------------------------------------------*/
 	return {
 		// GAMES DATA RELATED FUNCTIONS
-		getGameById : games_data.getGameById,
-		getGamesListByName : games_data.getGamesListByName,
-		getPopularGamesList : games_data.getPopularGamesList,
+		getGameById : data_ext.getGameById,
+		getGamesListByName : data_ext.getGamesListByName,
+		getPopularGamesList : data_ext.getPopularGamesList,
 		// DATA MEM RELATED FUNCTIONS
-		changeGroupName : data_mem.changeGroupName,
-		changeGroupDescription : data_mem.changeGroupDescription,
-    	createGroup : data_mem.createGroup,
+		changeGroupName : data_int.changeGroupName,
+		changeGroupDescription : data_int.changeGroupDescription,
+    	createGroup : data_int.createGroup,
 	
-    	deleteGroup : data_mem.deleteGroup,
-    	deleteGameFromGroup : data_mem.deleteGameFromGroup,
-    	addGroupGame : data_mem.addGroupGame,
+    	deleteGroup : data_int.deleteGroup,
+    	deleteGameFromGroup : data_int.deleteGameFromGroup,
+    	addGroupGame : data_int.addGroupGame,
 
-    	getGroupGames : data_mem.getGroupGames,
-		groupHasGame : data_mem.groupHasGame,
-		getGroup : data_mem.getGroup,
-		getGroups : data_mem.getGroups,
-		getGroupDetails: data_mem.getGroupDetails, 
+    	getGroupGames : data_int.getGroupGames,
+		groupHasGame : data_int.groupHasGame,
+		getGroup : data_int.getGroup,
+		getGroups : data_int.getGroups,
+		getGroupDetails: data_int.getGroupDetails, 
 
 
 		// USER RELATED FUNCTIONS
-		createUser: data_mem.createUser,
-		deleteUser : data_mem.deleteUser,
-		getUser : data_mem.getUser,
-		addGroupToUser : data_mem.addGroupToUser,
-		deleteGroupFromUser : data_mem.deleteGroupFromUser,
-		getUserGroups : data_mem.getUserGroups, 
+		createUser: data_int.createUser,
+		deleteUser : data_int.deleteUser,
+		getUser : data_int.getUser,
+		addGroupToUser : data_int.addGroupToUser,
+		deleteGroupFromUser : data_int.deleteGroupFromUser,
+		getUserGroups : data_int.getUserGroups, 
 
-		//services functions game-mem 
-		 addGameToGroup
+		// EXCLUSIVE SERVICES FUNCTIONS (USE BOTH DATA_INT AND DATA_EXT)
+		addGameToGroup
 	};
 }
