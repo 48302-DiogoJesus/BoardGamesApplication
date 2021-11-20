@@ -1,5 +1,7 @@
 'use strict';
 
+const { getGroupDetails } = require("./borga-data-mem");
+
 
 
 module.exports = function (games_data, data_mem) {
@@ -9,11 +11,12 @@ module.exports = function (games_data, data_mem) {
 	/*------------------------------------------------------------ */
 	async function addGameToGroup(group_ID, game_ID){ 
 		try {
-			let gameToAdd = await games_data.getGameById(game_ID) 
-			data_mem.addGroupGame(group_ID, gameToAdd) 
-		} catch (err) { return err }
-		return game_ID
-	}
+            let gameToAdd = await games_data.getGameById(game_ID) 
+            data_mem.addGroupGame(group_ID, gameToAdd) 
+			return getGroupDetails(group_ID)
+        } catch (err) { return err }
+    }
+	
 	/*---------------------------------------------------------------*/
 	return {
 		// GAMES DATA RELATED FUNCTIONS
