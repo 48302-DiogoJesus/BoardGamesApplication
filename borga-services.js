@@ -29,7 +29,7 @@ module.exports = function (games_data, data_mem) {
     	createGroup : data_mem.createGroup,
 	
     	deleteGroup : data_mem.deleteGroup,
-    	deleteGroupGame : data_mem.deleteGroupGame,
+    	deleteGameFromGroup : data_mem.deleteGameFromGroup,
     	addGroupGame : data_mem.addGroupGame,
 
     	getGroupGames : data_mem.getGroupGames,
