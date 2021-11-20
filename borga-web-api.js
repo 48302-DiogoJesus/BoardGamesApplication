@@ -19,20 +19,7 @@ module.exports = function (services) {
 	 * @param {res} response object
 	 */
 	function handleError(err, req, res) {
-		// Research most important http codes and add them to borga-errors \\
-		/*
-		switch (err.name) {
-			case 'NOT_FOUND': 
-				res.status(404);
-				break;
-			case 'EXT_SVC_FAIL':
-				res.status(502);
-				break;
-			default:
-				res.status(500);				
-		}
-		*/
-		res.json({ cause: err });
+		res.status(err.http_code).json({ cause: err });
 	}
     
 	/* GAMES RELATED FUNCTIONS */
