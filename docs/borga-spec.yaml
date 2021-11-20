@@ -14,7 +14,7 @@ paths:
   /api/games:
     get:
       tags:
-        - Query Games Information
+        - Games
       summary: Find a game by query
       description: Uses Board Game Atlas API to find games by providing a query.
       parameters:
@@ -48,29 +48,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookResponse"
-        400:
-          description: No query indicated in the request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
-        404:
-          description: No book found for the query
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
-        502:
-          description: Google Books API is not responding
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
+        
   /api/groups:
     get:
       tags:
         - Groups
-      summary: List all books in the personal collection
+      summary: Get a group by its ID
+      description: Get a group by its ID
+      parameters:
+        - name: id
+          in: params
+          description: ID of the group to search for
+          required: false
+          schema:
+            type: string
+            example: "/groups/2"
+      responses:
+        200:
+          description: The personal list of books
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookListResponse"
+    get:
+      tags:
+        - Groups
+      summary: List all existing groups
+      description: Get all groups
       responses:
         200:
           description: The personal list of books
