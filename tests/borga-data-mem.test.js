@@ -225,7 +225,7 @@ test('Add group to a user', () => {
 
 //Delete group from a user
 test('Delete group from a user', () => {
-    let newUserID = dataMem.createUser("Manuel")
+    let newUserID = dataMem.createUser("Zé")
     dataMem.addGroupToUser(newUserID, 1)
     expect(dataMem.userHasGroup(newUserID, 1)).toBe(true)
     dataMem.deleteGroupFromUser(newUserID, 1)
@@ -237,7 +237,7 @@ test('Delete group from a user', () => {
 
 //Get Groups from Users
 test('Get groups id from users', () => {
-    let newUserID = dataMem.createUser("Manuel")
+    let newUserID = dataMem.createUser("Filipino")
     dataMem.addGroupToUser(newUserID, 1)
     dataMem.addGroupToUser(newUserID, 2)
     expect(JSON.stringify(dataMem.getUserGroups(newUserID))).toBe(JSON.stringify([1, 2]))
