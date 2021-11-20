@@ -307,9 +307,17 @@ function deleteGroupFromUser(user_id, group_id) {
 function getUserGroups(user_ID) {
     if (!userExists(user_ID)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     return users[user_ID].groups.map(group_id => {
-        if (groups[group_id] != undefined) return groups[group_id]
-    }).filter(it => it !== undefined)
+        if (groupExists(group_id)) return groups[group_id]; else deleteGroupFromUser(user_ID, group_id); //remove groupExists and deleteGroupFromUser when function deleteUnexistingGroups is created 
+    })
+    //remove when function deleteUnexistingGroups is created
+    .filter(it => it !== undefined)
 }
+
+/*
+Create function to delete unexisting groups from all users
+
+Function deleteUnexistingGroups
+*/
 
 module.exports = {
     // Group functions
@@ -335,5 +343,6 @@ module.exports = {
     getUser : getUser,
     addGroupToUser : addGroupToUser,
     deleteGroupFromUser : deleteGroupFromUser,
-    getUserGroups : getUserGroups
+    getUserGroups : getUserGroups,
+    userHasGroup : userHasGroup
 }
