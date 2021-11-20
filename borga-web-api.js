@@ -178,17 +178,13 @@ module.exports = function (services) {
 	async function handleAddGameToGroup(req,res){
 
 		try{
-
-			let gameToAdd_ID = req.query.game_ID  
+			let new_game_id = req.query.game_id  
 			
 			let group_ID = req.params.id
 			
-			let updatedGroup = await services.addGameToGroup(group_ID, gameToAdd_ID) 
-			
+			let updatedGroup = await services.addGameToGroup(group_ID, new_game_id) 
 
 			res.json(updatedGroup)
-
-
 		} catch (err) { 
 			handleError(err, req, res)
 		} 
