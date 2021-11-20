@@ -14,11 +14,8 @@ module.exports = function (games_data, data_mem) {
             let gameToAdd = await games_data.getGameById(game_ID) 
             data_mem.addGroupGame(group_ID, gameToAdd) 
 			return getGroupDetails(group_ID)
-
         } catch (err) { return err }
-       
     }
-		
 	
 	/*---------------------------------------------------------------*/
 	return {

@@ -236,7 +236,6 @@ function createUser(username){
         'username' : username,
         'groups' : []
     }
-    console.log(users)
     if (userExists(newID)) return newID; else return error.DATA_MEM_COULD_NOT_CREATE_USER
 }
 
