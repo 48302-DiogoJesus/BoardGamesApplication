@@ -1,6 +1,7 @@
 'use strict'
 
 const error = require('./borga-errors')
+const crypto = require('crypto')
 
 // Users Structure \\
 // Example of a User:
@@ -230,11 +231,12 @@ function userHasGroup(user_id, search_group_id) {
 function createUser(username){
     if (username === "") throw error.DATA_MEM_INVALID_USERNAME
     /* Tem de ser substituido por UUID */
-    let newID = Object.keys(users).length + 1
+    let newID = crypto.randomUUID()
     users[newID] = {
         'username' : username,
         'groups' : []
     }
+    console.log(users)
     if (userExists(newID)) return newID; else return error.DATA_MEM_COULD_NOT_CREATE_USER
 }
 
