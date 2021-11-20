@@ -281,7 +281,7 @@ function addGroupToUser(user_id, group_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
     users[user_id].groups.push(group_id) 
-    if (!userHasGroup(user_id, group_id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return new_group.id//justo confirm the group was added
+    if (!userHasGroup(user_id, group_id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return group_id
 }
 
 /**
