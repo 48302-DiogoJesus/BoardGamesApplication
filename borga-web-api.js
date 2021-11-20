@@ -176,7 +176,6 @@ module.exports = function (services) {
 	} 
 
 	async function handleAddGameToGroup(req,res){
-
 		try{
 			let new_game_id = req.query.game_id  
 			
@@ -189,6 +188,14 @@ module.exports = function (services) {
 			handleError(err, req, res)
 		} 
 	} 
+
+	async function handleDeleteGameFromGroup(req, res) {
+		try {
+
+		} catch (err) {
+			handleError(err, req, res)
+		}
+	}
 
 	// Serve the API documents
 	// router.use('/docs', openApiUi.serve);
@@ -208,7 +215,7 @@ module.exports = function (services) {
 
 	// Resource: '/groups/games'
 	router.post('/groups/:id/games',handleAddGameToGroup)
-	//router.delete('/groups/:id/games', handleGetGroupGame)//use query to do it
+	router.delete('/groups/:id/games', handleDeleteGameFromGroup)
 
 
 	// Resource: /users
