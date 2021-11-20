@@ -186,7 +186,26 @@ module.exports = function (services) {
 		} catch (err) {
 			handleError(err, req, res)
 		}
-	}
+	} 
+
+	async function handleAddGameToGroup(req,res){
+		try{ 
+			console.log(req.query.game_ID) 
+			console.log(req.params.id)  
+
+			let gameToAdd_ID = req.query.game_ID  
+			
+			let group_ID = req.params.id
+			
+			let adding = services.addGametoGroup(group_ID, gameToAdd_ID) 
+			
+			console.log(adding)
+
+			res.json( adding )
+		}catch(err){} 
+
+
+	} 
 
 	// Serve the API documents
 	router.use('/docs', openApiUi.serve);
@@ -195,7 +214,7 @@ module.exports = function (services) {
 
 	// PATHS HANDLING \\
 	// Resource: /games
-	router.get('/games/search', handleGamesQueries);
+	router.get('/games', handleGamesQueries);
 
 	// Resource: /groups
 	router.get('/groups', handleGetGroups)
@@ -205,8 +224,8 @@ module.exports = function (services) {
 	router.put('/groups/', handleEditGroup)
 
 	// Resource: '/groups/games'
-	// router.post('/groups/games', handleAddGroupGame)
-	// router.delete('/groups/games/:game_id', handleGetGroupGame)
+	router.post('/groups/:id/games',handleAddGameToGroup)
+	// router.delete('/groups/:id/games/:game_id', handleGetGroupGame)
 
 	// Resource: /users
 	router.post('/users/', handleCreateUser)
