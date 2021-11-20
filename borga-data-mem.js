@@ -152,7 +152,7 @@ function deleteGroup(group_ID) {
  * @param {game_ID} Game IF
  * @returns true if that group game was deleted
  */
-function deleteGroupGame(group_ID, game_ID) {
+function deleteGameFromGroup(group_ID, game_ID) {
     if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (!groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
     // Remove game from games list
@@ -329,7 +329,7 @@ module.exports = {
     getGroup : getGroup,
     getGroups : getGroups,
 
-    deleteGroupGame : deleteGroupGame,
+    deleteGameFromGroup : deleteGameFromGroup,
     addGroupGame : addGroupGame,
     getGroupGameNames : getGroupGameNames,
     groupHasGame: groupHasGame, 

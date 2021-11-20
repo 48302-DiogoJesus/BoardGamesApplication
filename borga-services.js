@@ -13,7 +13,7 @@ module.exports = function (games_data, data_mem) {
 		try {
             let gameToAdd = await games_data.getGameById(game_ID) 
             data_mem.addGroupGame(group_ID, gameToAdd) 
-			return getGroupDetails(game_ID)
+			return getGroupDetails(group_ID)
 
         } catch (err) { return err }
        
@@ -32,7 +32,7 @@ module.exports = function (games_data, data_mem) {
     	createGroup : data_mem.createGroup,
 	
     	deleteGroup : data_mem.deleteGroup,
-    	deleteGroupGame : data_mem.deleteGroupGame,
+    	deleteGameFromGroup : data_mem.deleteGameFromGroup,
     	addGroupGame : data_mem.addGroupGame,
 
     	getGroupGames : data_mem.getGroupGames,
