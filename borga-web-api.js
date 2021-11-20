@@ -1,5 +1,6 @@
 'use strict'
 const express = require('express');
+const { getGroupDetails } = require('./borga-data-mem');
 const error = require('./borga-errors')
 
 // const openApiUi = require('swagger-ui-express');
@@ -157,7 +158,7 @@ module.exports = function (services) {
 	async function handleGetGroups(req, res) {
 		try {
 			let groups = await services.getGroups()
-			res.json({ groups })
+			res.status(200).json({ groups })
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -169,7 +170,7 @@ module.exports = function (services) {
 			if (!newUserName) throw error.WEB_API_INVALID_USER_NAME
 			let newUserID = await services.createUser(newUserName)
 			// Later return the UUID token here so that user can store it in local storage
-			res.json({ newUserID })
+			res.status(204).status().json({ newUserID })
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -183,14 +184,21 @@ module.exports = function (services) {
 			
 			let updatedGroup = await services.addGameToGroup(group_ID, new_game_id) 
 
-			res.json(updatedGroup)
+			res.status(204).json(updatedGroup)
 		} catch (err) { 
 			handleError(err, req, res)
 		} 
 	} 
 
 	async function handleDeleteGameFromGroup(req, res) {
-		try {
+		try { 
+
+			let game_id = req.query.game_id 
+			let group_id = req.params.id 
+
+			await services.deleteGameFromGroup(group_id, game_id) 
+
+			res.status(204).json(await services.getGroupDetails(group_id))
 
 		} catch (err) {
 			handleError(err, req, res)
