@@ -1,9 +1,22 @@
 'use strict';
 
+
+
 module.exports = function (games_data, data_mem) {
 
 	// Juntar external e internal e exportar
 
+	/*------------------------------------------------------------ */
+	async function addGameToGroup(group_ID, game_ID){ 
+		/*console.log("noice")
+		let gameToAdd = await games_data.getGameById(game_ID) 
+		data_mem.addGroupGame(group_ID, gameToAdd) 
+		return gameToAdd*/
+		console.log("noice")
+		 return true
+
+	}
+	/*---------------------------------------------------------------*/
 	return {
 		// GAMES DATA RELATED FUNCTIONS
 		getGameById : games_data.getGameById,
@@ -22,7 +35,8 @@ module.exports = function (games_data, data_mem) {
 		groupHasGame : data_mem.groupHasGame,
 		getGroup : data_mem.getGroup,
 		getGroups : data_mem.getGroups,
-		getGroupDetails: data_mem.getGroupDetails,
+		getGroupDetails: data_mem.getGroupDetails, 
+
 
 		// USER RELATED FUNCTIONS
 		createUser: data_mem.createUser,
@@ -30,6 +44,9 @@ module.exports = function (games_data, data_mem) {
 		getUser : data_mem.getUser,
 		addGroupToUser : data_mem.addGroupToUser,
 		deleteGroupFromUser : data_mem.deleteGroupFromUser,
-		getUserGroups : data_mem.getUserGroups
+		getUserGroups : data_mem.getUserGroups, 
+
+		//services functions game-mem 
+		 addGameToGroup
 	};
 }
