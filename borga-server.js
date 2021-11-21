@@ -3,12 +3,15 @@
 const DEFAULT_PORT = 8888;
 const SERVER_PORT = process.argv[2] || DEFAULT_PORT;
 
+
 const borga_games_data = require('./board-games-data');
 const borga_data_mem = require('./borga-data-mem');
 
 const services = require('./borga-services')(borga_games_data, borga_data_mem);
 
-const web_api = require('./borga-web-api')(services);
+const borga_queue = require('./borga-queue')
+
+const web_api = require('./borga-web-api')(services, borga_queue);
 
 const express = require('express');
 const app = express();

@@ -146,7 +146,7 @@ async function getGamesListByName(name) {
     .then(data => {
         if (data.count == 0) throw error.BGATLAS_NOT_FOUND
         let games = data.games
-        return buildGames(games.slice(0, data.count))
+        return buildGames(games.slice(0, 14))
     }).catch(_ => {throw error.BGATLAS_NOT_FOUND})
 }
 
