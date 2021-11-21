@@ -26,7 +26,7 @@ module.exports = function (services) {
 	/* GAMES RELATED FUNCTIONS */
 	// Group of functions to handle queries related to games functionality
     const validGamesQueries = {
-		top : getTopNGames,
+		top : getTopNGames, 
 		id : getGameById,
 		name : getGamesByName
 	}
