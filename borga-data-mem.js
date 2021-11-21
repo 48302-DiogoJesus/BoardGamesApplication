@@ -171,7 +171,7 @@ function deleteGameFromGroup(group_ID, game_ID) {
  * @param {new_game} New Game object
  * @returns [new_game_ID] if game is successfuly added to group
  */
- function addGroupGame(group_id, new_game) {
+ function addGameToGroup(group_id, new_game) {
     if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
     groups[group_id].games[new_game.id] = new_game
@@ -338,7 +338,7 @@ module.exports = {
     getGroups : getGroups,
 
     deleteGameFromGroup : deleteGameFromGroup,
-    addGroupGame : addGroupGame,
+    addGameToGroup : addGameToGroup,
     getGroupGameNames : getGroupGameNames,
     groupHasGame: groupHasGame, 
 
