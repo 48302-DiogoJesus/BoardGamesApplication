@@ -5,8 +5,7 @@ const error = require('./borga-errors')
 // const openApiUi = require('swagger-ui-express');
 // const openApiSpec = require('./docs/borga-spec.yaml');
 
-module.exports = function (services) {
-
+module.exports = function (services, queue) {
 	// Initialize express router
 	const router = express.Router();
 	// Add support for JSON inside express
@@ -37,12 +36,14 @@ module.exports = function (services) {
 	 * @param {req} request object 
 	 * @param {res} response object
 	 */
-	function handleGamesQueries(req, res) {
+	async function handleGamesQueries(req, res) {
 		try {
 			// Extract first query key
 			let firstQuery = Object.keys(req.query)[0]
 			// If query is not recognized throw error
 			if (!Object.keys(validGamesQueries).includes(firstQuery)) throw error.WEB_API_INVALID_QUERY
+			// Since this function calls the Exteral API it makes sense to queue here
+			await queue.wait()
 			// Call right function with parameter being req.query[top]
 			validGamesQueries[firstQuery](req.query[firstQuery], req, res)
 		} catch (err) {
@@ -181,7 +182,7 @@ module.exports = function (services) {
 			
 			let group_ID = req.params.id
 			
-			let updatedGroup = await services.addGameToGroup(group_ID, new_game_id) 
+			let updatedGroup = await services.addGameToGroupByID(group_ID, new_game_id) 
 
 			res.status(201).json(updatedGroup)
 		} catch (err) { 
