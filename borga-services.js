@@ -5,11 +5,11 @@ module.exports = function (data_ext, data_int) {
 	// Juntar external e internal e exportar
 
 	/*------------------------------------------------------------ */
-	async function addGameToGroup(group_ID, game_ID){ 
+	async function addGameToGroupByID(group_ID, game_ID){ 
 		try {
-            let gameToAdd = await games_data.getGameById(game_ID) 
-            data_mem.addGroupGame(group_ID, gameToAdd) 
-			return data_mem.getGroupDetails(group_ID)
+            let gameToAdd = await data_ext.getGameById(game_ID) 
+            data_int.addGameToGroup(group_ID, gameToAdd) 
+			return data_int.getGroupDetails(group_ID)
         } catch (err) { return err }
     }
 	
@@ -26,7 +26,6 @@ module.exports = function (data_ext, data_int) {
 	
     	deleteGroup : data_int.deleteGroup,
     	deleteGameFromGroup : data_int.deleteGameFromGroup,
-    	addGroupGame : data_int.addGroupGame,
 
     	getGroupGames : data_int.getGroupGames,
 		groupHasGame : data_int.groupHasGame,
@@ -44,6 +43,6 @@ module.exports = function (data_ext, data_int) {
 		getUserGroups : data_int.getUserGroups, 
 
 		// EXCLUSIVE SERVICES FUNCTIONS (USE BOTH DATA_INT AND DATA_EXT)
-		addGameToGroup
+		addGameToGroupByID
 	};
 }
