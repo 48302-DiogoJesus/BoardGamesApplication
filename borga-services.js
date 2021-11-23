@@ -41,6 +41,7 @@ module.exports = function (data_ext, data_int) {
 		addGroupToUser : data_int.addGroupToUser,
 		deleteGroupFromUser : data_int.deleteGroupFromUser,
 		getUserGroups : data_int.getUserGroups, 
+		userHasGroup: data_int.userHasGroup,
 
 		// EXCLUSIVE SERVICES FUNCTIONS (USE BOTH DATA_INT AND DATA_EXT)
 		addGameToGroupByID

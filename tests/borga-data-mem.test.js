@@ -1,5 +1,9 @@
-const dataMem = require('../borga-data-mem')
+const borga_data_mem = require('../borga-data-mem')
+const board_games_data = require('../board-games-data')
+const services = require('../borga-services')(board_games_data, borga_data_mem) 
 const error = require('../borga-errors')
+
+console.log(services)
 
 // TESTS TEMPLATE FOR borga-data-mem 
 /*
@@ -15,193 +19,189 @@ test('Description of the test here', () => {
     or 
     https://jestjs.io/docs/expect
 
-    dataMem.deleteGroup()  // To avoid leaving unwanted groups to the next test
+    services.deleteGroup()  // To avoid leaving unwanted groups to the next test
 })
 */
 
 // createGroup
 test('Create group with empty name and description', () => {
-    let newGroupID = dataMem.createGroup()
+    let newGroupID = services.createGroup()
     try {
-        dataMem.getGroup(newGroupID)
+        services.getGroup(newGroupID)
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_INVALID_GROUP_NAME.code)
     }
-    dataMem.deleteGroup(newGroupID)
+    services.deleteGroup(newGroupID)
 })
 
-test('Create group with valid name', () => {
-    let newGroupID = dataMem.createGroup("New Valid Group Name", "New group description")
-    expect(dataMem.getGroup(newGroupID)).toStrictEqual({
+test('Create group with valid name', async () => {
+    let newGroupID = await services.createGroup("New Valid Group Name", "New group description")
+    expect(await services.getGroup(newGroupID)).toStrictEqual({
         name: "New Valid Group Name",
         description: "New group description",
         games: {}
     })
-    dataMem.deleteGroup(newGroupID)
+    await services.deleteGroup(newGroupID)
 })
 
 // getGroup
-test('Get group that does not exist', () => {
+test('Get group that does not exist', async () => {
     try {
-        dataMem.getGroup(2)
+        await services.getGroup(2)
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST.code)
     }
 })
 
-test('Get object from valid group', () => {
-    let newGroupID = dataMem.createGroup("New Group", "New Description")
-    expect(dataMem.getGroup(newGroupID)).toStrictEqual({
+test('Get object from valid group', async () => {
+    let newGroupID = await services.createGroup("New Group", "New Description")
+    expect(await services.getGroup(newGroupID)).toStrictEqual({
         name: "New Group",
         description: "New Description",
         games: {}
     })
-    dataMem.deleteGroup(newGroupID)
+    await services.deleteGroup(newGroupID)
 })
 
 // changeGroupName
-test('Change group name if new name is empty', () => {
-    let groupID = dataMem.createGroup("Old Group", "New Description")
+test('Change group name if new name is empty', async () => {
+    let groupID = await services.createGroup("Old Group", "New Description")
     try {
-        dataMem.changeGroupName(groupID, "")
+        await services.changeGroupName(groupID, "")
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_INVALID_GROUP_NAME.code)
     }
-    dataMem.deleteGroup(groupID)
+    await services.deleteGroup(groupID)
 })
 
-test('Change group name if new name is not empty', () => {
-    let groupID = dataMem.createGroup("Old Group")
-    dataMem.changeGroupName(groupID, "New Group Name")
-    expect(dataMem.getGroup(groupID).name).toBe("New Group Name")
-    dataMem.deleteGroup(groupID)
+test('Change group name if new name is not empty', async () => {
+    let groupID = await services.createGroup("Old Group")
+    await services.changeGroupName(groupID, "New Group Name")
+    expect((await services.getGroup(groupID)).name).toBe("New Group Name")
+    await services.deleteGroup(groupID)
 })
 
-test('Change group name from group that does not exist', () => {
+test('Change group name from group that does not exist', async () => {
     try {
-        dataMem.changeGroupName(1, "Something")
+        await services.changeGroupName(1, "Something")
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST.code)
     }
 })
 
 // deleteGroup
-test('Try to delete a non existing group', () => {
+test('Try to delete a non existing group', async () => {
     try {
-        dataMem.deleteGroup("A Group")
+        await services.deleteGroup("A Group")
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST.code)
     }
 })
 
-test('Delete an existing group', () => {
-    let newGroupID = dataMem.createGroup("New Group", "New Description")
-    let searchGroup = dataMem.getGroup(newGroupID)
+test('Delete an existing group', async () => {
+    let newGroupID = await services.createGroup("New Group", "New Description")
+    let searchGroup = await services.getGroup(newGroupID)
     expect(searchGroup).toStrictEqual({
         name: "New Group",
         description: "New Description",
         games: {}
     })
-    dataMem.deleteGroup(newGroupID)
+    await services.deleteGroup(newGroupID)
     try {
-        dataMem.getGroup(newGroupID)
+        await services.getGroup(newGroupID)
     } catch (err) {
         // Expect group to not exist anymore
         expect(err.code).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST.code)
     }
 })
 
-// addGroupGame
+test('Add game to a valid group', async () => {
+    let newGroupID = await services.createGroup("New Group", "New Description")
+    expect(await services.addGameToGroupByID(newGroupID, 'jhadHUIA')).toBe('jhadHUIA')
+    await services.deleteGroup(newGroupID)
+})
 
-test('Add duplicate game to a group', () => {
-    let newGroupID = dataMem.createGroup("New Group", "New Description")
-    dataMem.addGroupGame(newGroupID, 'sdabasdj834238')
+test('Add duplicate game to a group', async () => {
+    let newGroupID = await services.createGroup("New Group", "New Description")
+    await services.addGameToGroupByID(newGroupID, 'sdabasdj834238')
     try {
-        dataMem.addGroupGame(newGroupID, 'sdabasdj834238')
+        await services.addGameToGroupByID(newGroupID, 'sdabasdj834238')
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_GROUP_ALREADY_HAS_GAME.code)
     }
-    dataMem.deleteGroup(newGroupID)
+    await services.deleteGroup(newGroupID)
 })
 
-test('Add game to a unexisting group', () => {
+test('Add game to a unexisting group', async () => {
     try {
-        dataMem.addGroupGame(1, 'sdabasdj834238')
+        await services.addGameToGroupByID(1, 'sdabasdj834238')
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST.code)
     }
-})
-
-test('Add game to a valid group', () => {
-    let newGroupID = dataMem.createGroup("New Group", "New Description")
-    expect(dataMem.addGroupGame(newGroupID, {
-        id: 'jhadHUIA',
-        name : 'SomeName'
-    })).toBe('jhadHUIA')
-    dataMem.deleteGroup(newGroupID)
 })
 
 // getGroupGameNames
-test('Get game names from unexisting group', () => {
+test('Get game names from unexisting group', async () => {
     try {
-        dataMem.getGroupGameNames(1234)
+        await services.getGroupGameNames(1234)
     } catch (err) {
         expect(err.code).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST.code)
     }
 })
 
-test('Get game names from valid group', () => {
-    let groupID = dataMem.createGroup("New Group", "New Description")
-    dataMem.addGroupGame(groupID, {
+// FIX THIS
+test('Get game names from valid group', async () => {
+    let groupID = services.createGroup("New Group", "New Description")
+    services.addGameToGroupByID(groupID, {
         'id': 'jhadHUIA',
         'name': "First"
     })
-    dataMem.addGroupGame(groupID, {
+    services.addGameToGroupByID(groupID, {
         'id': 'jhsdadHUIA',
         'name': "Second"
     })
-    expect(JSON.stringify(dataMem.getGroupGameNames(groupID))).toBe(JSON.stringify(["First", "Second"]))
-    dataMem.deleteGroup(groupID)
+    expect(JSON.stringify(services.getGroupGameNames(groupID))).toBe(JSON.stringify(["First", "Second"]))
+    services.deleteGroup(groupID)
 })
 
-// deleteGroupGame
-test('Delete Group Game from valid group', () => {
-    let groupID = dataMem.createGroup("New Group", "New Description")
+// FIX THIS
+test('Delete Group Game from valid group', async () => {
+    let groupID = await services.createGroup("New Group", "New Description")
     let game = {
         'id': 'jhadHUIA',
         'name': "First"
     }
-    dataMem.addGroupGame(groupID, game)
-    expect(dataMem.groupHasGame(groupID, game.id)).toBe(true)
-    dataMem.deleteGameFromGroup(groupID, game.id)
-    expect(dataMem.groupHasGame(groupID, game)).toBe(false)
-    dataMem.deleteGroup(groupID)
+    await services.addGameToGroupByID(groupID, game)
+    expect(await services.groupHasGame(groupID, game.id)).toBe(true)
+    await services.deleteGameFromGroup(groupID, game.id)
+    expect(await services.groupHasGame(groupID, game)).toBe(false)
+    await services.deleteGroup(groupID)
 })
 
 
 //Create User
-test('Create user', () => {
-    let newUserID = dataMem.createUser("Miguel")
-    expect(dataMem.getUser(newUserID)).toStrictEqual({
+test('Create user', async () => {
+    let newUserID = await services.createUser("Miguel")
+    expect(await services.getUser(newUserID)).toStrictEqual({
         username : "Miguel",
         groups : []
 
     })
-    dataMem.deleteUser(newUserID)
+    await services.deleteUser(newUserID)
 })
 
 
 //Delete User
-test('Delete an user', () => {
-    let newUserID = dataMem.createUser("Quim")
-    let getUser = dataMem.getUser(newUserID)
+test('Delete an user', async () => {
+    let newUserID = await services.createUser("Quim")
+    let getUser = await services.getUser(newUserID)
     expect(getUser).toStrictEqual({
         username : "Quim",
         groups : []
     })
-    dataMem.deleteUser(newUserID)
+    await services.deleteUser(newUserID)
     try {
-        dataMem.getUser(newUserID)
+        await services.getUser(newUserID)
     } catch (err) {
         // Expect user to not exist anymore
         expect(err.code).toBe(error.DATA_MEM_USER_DOES_NOT_EXIST.code)
@@ -210,44 +210,44 @@ test('Delete an user', () => {
 
 
 //Associate a group to a user
-test('Add group to a user', () => {
-    let newUserID = dataMem.createUser("Manuel")
-    let getUser = dataMem.getUser(newUserID)
-    dataMem.addGroupToUser(newUserID, 1)
+test('Add group to a user', async () => {
+    let newUserID = await services.createUser("Manuel")
+    let getUser = await services.getUser(newUserID)
+    await services.addGroupToUser(newUserID, 1)
     expect(getUser).toStrictEqual({
         username : "Manuel",
         groups : [1]
     })
-    dataMem.deleteUser(newUserID)
+    await services.deleteUser(newUserID)
 })
 
 
 
 //Delete group from a user
-test('Delete group from a user', () => {
-    let newUserID = dataMem.createUser("Zé")
-    dataMem.addGroupToUser(newUserID, 1)
-    expect(dataMem.userHasGroup(newUserID, 1)).toBe(true)
-    dataMem.deleteGroupFromUser(newUserID, 1)
-    expect(dataMem.userHasGroup(newUserID, 1)).toBe(false)
-    dataMem.deleteUser(newUserID)
+test('Delete group from a user', async () => {
+    let newUserID = await services.createUser("Zé")
+    await services.addGroupToUser(newUserID, 1)
+    expect(await services.userHasGroup(newUserID, 1)).toBe(true)
+    await services.deleteGroupFromUser(newUserID, 1)
+    expect(await services.userHasGroup(newUserID, 1)).toBe(false)
+    await services.deleteUser(newUserID)
 
 })
 
 
 //Get Groups from Users
-test('Get groups id from users', () => {
-    let newUserID = dataMem.createUser("Filipino")
-    let newGroupID = dataMem.createGroup("Novo Grupo", "nova descrição")
-    let newGroupID2 = dataMem.createGroup("Novo Grupo 2", "nova descrição 2")
+test('Get groups id from users', async () => {
+    let newUserID = await services.createUser("Filipino")
+    let newGroupID = await services.createGroup("Novo Grupo", "nova descrição")
+    let newGroupID2 = await services.createGroup("Novo Grupo 2", "nova descrição 2")
     // Only two of the following are actual groups
-    dataMem.addGroupToUser(newUserID, newGroupID)
-    dataMem.addGroupToUser(newUserID, newGroupID2)
-    dataMem.addGroupToUser(newUserID, 33)
-    dataMem.addGroupToUser(newUserID, 90)
-    // Delete group created in previous line
+    await services.addGroupToUser(newUserID, newGroupID2)
+    await services.addGroupToUser(newUserID, newGroupID)
+    await services.addGroupToUser(newUserID, 33)
+    await services.addGroupToUser(newUserID, 90)
+    await // Delete group created in previous line
     // User will still have groups = [33, 90, 1, 2] even though 33 and 90 do not exist
     // The function below will only return the existing groups and remove others from user groups
-    expect(dataMem.getUserGroups(newUserID).length).toBe(2)
-    dataMem.deleteUser(newUserID)
+    expect(await (services.getUserGroups(newUserID)).length).toBe(2)
+    await services.deleteUser(newUserID)
 })
