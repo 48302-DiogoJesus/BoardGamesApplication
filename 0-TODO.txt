@@ -8,6 +8,7 @@
 - Create tokens object pointing to username:
     create functions getBearerToken, tokenToUsername, usernameToToken
 - Pass some functions to services (see github)
+- Add security scheme to OpenAPI
 
 - Finish YAML OpenAPI file
 
