@@ -4,8 +4,13 @@
 - Remove nodemon
 
 // FINISH
+- Users key now is username
+- Create tokens object pointing to username:
+    create functions getBearerToken, tokenToUsername, usernameToToken
+- Pass some functions to services (see github)
+
 - Finish YAML OpenAPI file
 
 // TESTS
-- Make all tests be over the services file
+- Fix tests file
 - Make the unit tests for the games-data not depend on Game Atlas
