@@ -1,6 +1,7 @@
 // DONT FORGET
 - Complete all Postman tests and export collection as JSON to github 
 - Uncomment documentation lines in web-api (because yaml not working)
+- Remove nodemon
 
 // FINISH
 - Finish YAML OpenAPI file
