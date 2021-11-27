@@ -68,7 +68,7 @@ function groupExists(group_id){
  * @param {search_game_id} Game id to search for
  * @returns true if any game inside group has that [game_id] or false if not
  */
-function groupHasGame(group_id, search_game_id) {
+async function groupHasGame(group_id, search_game_id) {
     if (!groupExists(group_id)) return false
     return groups[group_id].games[search_game_id] != null
 }
@@ -114,7 +114,7 @@ function getGroup(group_id) {
 /**
  * Get all groups
  */
- function getGroups() {
+ async function getGroups() {
     return Object.keys(groups).map(group_id => {
         return getGroupDetails(group_id)
     })
@@ -125,7 +125,7 @@ function getGroup(group_id) {
  * @param {group_name} New group name
  * @returns the id of the group if it is created successfuly
  */
-function createGroup(group_name, group_description){
+async function createGroup(group_name, group_description){
     if (group_name === "") throw error.DATA_MEM_INVALID_GROUP_NAME
     if (group_description === "") throw error.DATA_MEM_INVALID_GROUP_DESCRIPTION
     let newID = Object.keys(groups).length + 1
@@ -169,7 +169,7 @@ function deleteGameFromGroup(group_id, game_id) {
  * @param {new_game} New Game object
  * @returns [new_game_ID] if game is successfuly added to group
  */
- function addGameToGroup(group_id, new_game) {
+async function addGameToGroup(group_id, new_game) {
     if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
     groups[group_id].games[new_game.id] = new_game
@@ -181,7 +181,7 @@ function deleteGameFromGroup(group_id, game_id) {
  * @param {group_id} Group ID
  * @returns list with all games from that group
  */
-function getGroupGameNames(group_id) {
+async function getGroupGameNames(group_id) {
     if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     let gamesGroup = []
     let originalGroupGames = groups[group_id].games
@@ -212,7 +212,7 @@ function getGroupDetails(group_id){
  * @param {user_id} User ID 
  * @returns true if user exists or false if not
  */
-function userExists(user_id){
+async function userExists(user_id){
     return users[user_id] != null
 }
 
@@ -222,7 +222,7 @@ function userExists(user_id){
  * @param {search_group_id} ID of the group to search for
  * @returns true if user has that group or false if not
  */
-function userHasGroup(user_id, search_group_id) {
+async function userHasGroup(user_id, search_group_id) {
     if (!userExists(user_id)) return false
     return users[user_id].groups.includes(search_group_id) 
 }
@@ -232,7 +232,7 @@ function userHasGroup(user_id, search_group_id) {
  * @param {username} Username for the new user to create 
  * @returns user of the new ID if user is created successfuly or throws exception
  */
-function createUser(username){
+async function createUser(username){
     if (username === "") throw error.DATA_MEM_INVALID_USERNAME
     /* Tem de ser substituido por UUID */
     let newID = crypto.randomUUID()
@@ -248,7 +248,7 @@ function createUser(username){
  * @param {user_id} User ID 
  * @returns true if user is deleted successfuly or throws exception
  */
-function deleteUser(user_id){
+async function deleteUser(user_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     delete users[user_id]
     // Make sure user got deleted
@@ -259,7 +259,7 @@ function deleteUser(user_id){
  * Get a list of all user names
  * @returns a list with all user names
  */
-function getUsers() {
+async function getUsers() {
     return Object.keys(users).map(user_id => {
         return users[user_id].username
     })
@@ -270,7 +270,7 @@ function getUsers() {
  * @param {user_id} User ID 
  * @returns the user object
  */
-function getUser(user_id){
+async function getUser(user_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     return users[user_id]
 }
@@ -280,7 +280,7 @@ function getUser(user_id){
  * @param {user_id} User ID
  * @param {group_id} Id of group we are associating
  */
-function addGroupToUser(user_id, group_id){
+async function addGroupToUser(user_id, group_id){
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
     users[user_id].groups.push(group_id) 
@@ -293,7 +293,7 @@ function addGroupToUser(user_id, group_id){
  * @param {group_id} group_id 
  * @returns true if group is disassociated from user
  */
-function deleteGroupFromUser(user_id, group_id) {
+async function deleteGroupFromUser(user_id, group_id) {
     if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (!userHasGroup(user_id,group_id)) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
     // Remove group from users list 
@@ -307,7 +307,7 @@ function deleteGroupFromUser(user_id, group_id) {
  * @param {user_ID} User ID 
  * @returns list with all groups [user_ID] is associated with
  */
-function getUserGroups(user_ID) {
+async function getUserGroups(user_ID) {
     if (!userExists(user_ID)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     deleteUnexistingGroups()
     return users[user_ID].groups.map(group_id => {
@@ -318,7 +318,7 @@ function getUserGroups(user_ID) {
 /**
  * Delete unexisting groups from all users groups list
  */
-function deleteUnexistingGroups() {
+async function deleteUnexistingGroups() {
     for (let user of Object.values(users)) {
         user.groups = user.groups.map(group_id => {
             if (groupExists(group_id)) return group_id

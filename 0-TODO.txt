@@ -1,8 +1,15 @@
 // DONT FORGET
 - Complete all Postman tests and export collection as JSON to github 
 - Uncomment documentation lines in web-api (because yaml not working)
+- Remove nodemon
 
 // FINISH
+- Users key now is username
+- Create tokens object pointing to username:
+    create functions getBearerToken, tokenToUsername, usernameToToken
+- Pass some functions to services (see github)
+- Add security scheme to OpenAPI
+
 - Finish YAML OpenAPI file
 
 // TESTS
