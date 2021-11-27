@@ -2,8 +2,9 @@
 const express = require('express');
 const error = require('./borga-errors')
 
-// const openApiUi = require('swagger-ui-express');
-// const openApiSpec = require('./docs/borga-spec.yaml');
+const YAML = require('yamljs')
+const openApi = require('swagger-ui-express');
+const openApiSpec = YAML.load('./docs/borga-spec.yaml');
 
 module.exports = function (services, queue) {
 	// Initialize express router
@@ -206,8 +207,8 @@ module.exports = function (services, queue) {
 	}
 
 	// Serve the API documents
-	// router.use('/docs', openApiUi.serve);
-	// router.get('/docs', openApiUi.setup(openApiSpec));
+	router.use('/docs', openApi.serve);
+	router.get('/docs', openApi.setup(openApiSpec));
 
 
 	// PATHS HANDLING \\

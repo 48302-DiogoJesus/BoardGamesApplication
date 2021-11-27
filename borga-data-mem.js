@@ -19,27 +19,25 @@ const users = {
 // Example of a Group:
 /*
     1 : {
+        owner: 'Manuel'
         name : 'A Group',
         description: 'A description of the group',
         games: {
-            'JASDH79sd': {
+            'JASDH79sd' : {
                 id : 'JASDH79sd', 
                 name: 'Root',
                 url: 'http://www.google.com', 
                 price: '45.4'
             },
-            'KLFGJK8': {
+            'KLFGJK8' : {
                 id : 'KLFGJK8', 
                 name: 'Something',
                 url: 'http://www.facebook.com', 
                 price: '25.4'
             }
         }
-    } => 
-        name : 'A Group',
-        description: 'A description of the group',
-        games: ['Something', 'Root']
-    */
+    }
+*/
 var groups = {
     
 }
@@ -47,7 +45,6 @@ var groups = {
 // Quickly Test functions inside this modules
 async function test() {
     try {
-        
     } catch (err) {
 
     }
@@ -58,16 +55,16 @@ test()
 
 /**
  * Checks if group exists 
- * @param {group_ID} Group ID
+ * @param {group_id} Group ID
  * @returns true if group exists or false if not
  */
-function groupExists(group_ID){
-    return groups[group_ID] != null
+function groupExists(group_id){
+    return groups[group_id] != null
 }
 
 /**
  * Checks if group has a Game by its ID
- * @param {group_ID} Group ID
+ * @param {group_id} Group ID
  * @param {search_game_id} Game id to search for
  * @returns true if any game inside group has that [game_id] or false if not
  */
@@ -78,13 +75,13 @@ function groupHasGame(group_id, search_game_id) {
 
 /**
  * Changes the name of a group
- * @param {group_ID} Group ID
+ * @param {group_id} Group ID
  * @param {new_name} New group name
  * @returns [new_name] if group name is changed successfuly
  */
-function changeGroupName(group_ID, new_name){
-    if(!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    const group = groups[group_ID]
+function changeGroupName(group_id, new_name){
+    if(!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    const group = groups[group_id]
     if (new_name === '') throw error.DATA_MEM_INVALID_GROUP_NAME
     group.name = new_name
     return new_name
@@ -92,13 +89,13 @@ function changeGroupName(group_ID, new_name){
 
 /**
  * Changes a Group description
- * @param {group_ID} Group ID
+ * @param {group_id} Group ID
  * @param {new_description} New description for that group
  * @returns [new_description] if description is changes successfuly
  */
-function changeGroupDescription(group_ID, new_description) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    const group = groups[group_ID]
+function changeGroupDescription(group_id, new_description) {
+    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    const group = groups[group_id]
     if (new_description === '') throw error.DATA_MEM_INVALID_GROUP_DESCRIPTION
     group.description = new_description
     return new_description
@@ -109,10 +106,11 @@ function changeGroupDescription(group_ID, new_description) {
  * @param {group_id} Group ID
  * @returns the group object identified by group_id
  */
-function getGroup(group_ID) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    return groups[group_ID]
+function getGroup(group_id) {
+    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    return groups[group_id]
 }  
+
 /**
  * Get all groups
  */
@@ -140,29 +138,29 @@ function createGroup(group_name, group_description){
 }
 
 /**
- * Delete a Games Group
- * @param {group_ID} identifier of a group
+ * Delete a Group
+ * @param {group_id} identifier of a group
  * @returns true if group got deleted successfuly
  */
-function deleteGroup(group_ID) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    delete groups[group_ID]
+function deleteGroup(group_id) {
+    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    delete groups[group_id]
     // Make sure group got deleted
-    if (groupExists(group_ID)) throw error.DATA_MEM_GROUP_NOT_DELETED; else return true
+    if (groupExists(group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED; else return true
 }
 
 /**
  * Deletes a Game from a Group
- * @param {group_ID} Group ID
- * @param {game_ID} Game IF
+ * @param {group_id} Group ID
+ * @param {game_id} Game IF
  * @returns true if that group game was deleted
  */
-function deleteGameFromGroup(group_ID, game_ID) {
-    if (!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    if (!groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
+function deleteGameFromGroup(group_id, game_id) {
+    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (!groupHasGame(group_id, game_id)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
     // Remove game from games list
-    delete groups[group_ID].games[game_ID];
-    if (groupHasGame(group_ID, game_ID)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
+    delete groups[group_id].games[game_id];
+    if (groupHasGame(group_id, game_id)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
 }
 
 /**
@@ -194,18 +192,19 @@ function getGroupGameNames(group_id) {
 
 }
 
-function getGroupDetails(group_ID){
+function getGroupDetails(group_id){
     
-    if(!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
+    if(!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
     
-    let current_group = getGroup(group_ID) 
+    let current_group = getGroup(group_id) 
     
-    let array_games = getGroupGameNames(group_ID) 
+    let array_games = getGroupGameNames(group_id) 
 
-    return { name: current_group.name, 
-            description: current_group.description, 
-            games: array_games }
-
+    return { 
+        'name': current_group.name, 
+        'description': current_group.description, 
+        'games': array_games 
+    }
 }
 /*---------------------- User functions ------------------------*/ 
 /**
