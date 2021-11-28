@@ -1,17 +1,18 @@
 // DONT FORGET
-- Complete all Postman tests and export collection as JSON to github 
-- Uncomment documentation lines in web-api (because yaml not working)
+- Export Postman collection as JSON to github 
+- Ask professor about "yamljs" dependency
 - Remove nodemon
 
 // FINISH
 - Users key now is username
+- crypto goes to webapi
 - Create tokens object pointing to username:
     create functions getBearerToken, tokenToUsername, usernameToToken
 - Pass some functions to services (see github)
-- Add security scheme to OpenAPI
 
-- Finish YAML OpenAPI file
+- Finish YAML OpenAPI file schemas
 
 // TESTS
-- Make all tests be over the services file
-- games data mock
+- Create default test users, groups, etc
+- Complete mock file (games data) and import it inside tests file
+- Use afterAll() to clear any changes

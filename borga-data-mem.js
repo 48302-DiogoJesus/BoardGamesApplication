@@ -58,7 +58,7 @@ test()
  * @param {group_id} Group ID
  * @returns true if group exists or false if not
  */
-function groupExists(group_id){
+async function groupExists(group_id){
     return groups[group_id] != null
 }
 
@@ -69,8 +69,8 @@ function groupExists(group_id){
  * @returns true if any game inside group has that [game_id] or false if not
  */
 async function groupHasGame(group_id, search_game_id) {
-    if (!groupExists(group_id)) return false
-    return groups[group_id].games[search_game_id] != null
+    if (!(await groupExists(group_id))) return false
+    return groups[group_id].games[search_game_id] != undefined
 }
 
 /**
@@ -79,8 +79,8 @@ async function groupHasGame(group_id, search_game_id) {
  * @param {new_name} New group name
  * @returns [new_name] if group name is changed successfuly
  */
-function changeGroupName(group_id, new_name){
-    if(!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+async function changeGroupName(group_id, new_name){
+    if(!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     const group = groups[group_id]
     if (new_name === '') throw error.DATA_MEM_INVALID_GROUP_NAME
     group.name = new_name
@@ -93,8 +93,8 @@ function changeGroupName(group_id, new_name){
  * @param {new_description} New description for that group
  * @returns [new_description] if description is changes successfuly
  */
-function changeGroupDescription(group_id, new_description) {
-    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+async function changeGroupDescription(group_id, new_description) {
+    if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     const group = groups[group_id]
     if (new_description === '') throw error.DATA_MEM_INVALID_GROUP_DESCRIPTION
     group.description = new_description
@@ -106,8 +106,8 @@ function changeGroupDescription(group_id, new_description) {
  * @param {group_id} Group ID
  * @returns the group object identified by group_id
  */
-function getGroup(group_id) {
-    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+async function getGroup(group_id) {
+    if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     return groups[group_id]
 }  
 
@@ -115,9 +115,11 @@ function getGroup(group_id) {
  * Get all groups
  */
  async function getGroups() {
-    return Object.keys(groups).map(group_id => {
-        return getGroupDetails(group_id)
-    })
+    let getGroups = []
+    for (let group_id of Object.keys(groups)) {
+        getGroups.push(await getGroupDetails(group_id))
+    } 
+    return getGroups
  }
 
 /**
@@ -134,7 +136,7 @@ async function createGroup(group_name, group_description){
         'description': group_description,
         'games' : {}
     }
-    if (groupExists(newID)) return newID; else return false
+    if (await groupExists(newID)) return newID; else return false
 }
 
 /**
@@ -142,11 +144,11 @@ async function createGroup(group_name, group_description){
  * @param {group_id} identifier of a group
  * @returns true if group got deleted successfuly
  */
-function deleteGroup(group_id) {
-    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+async function deleteGroup(group_id) {
+    if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     delete groups[group_id]
     // Make sure group got deleted
-    if (groupExists(group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED; else return true
+    if (await groupExists(group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED; else return true
 }
 
 /**
@@ -155,12 +157,12 @@ function deleteGroup(group_id) {
  * @param {game_id} Game IF
  * @returns true if that group game was deleted
  */
-function deleteGameFromGroup(group_id, game_id) {
-    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    if (!groupHasGame(group_id, game_id)) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
+async function deleteGameFromGroup(group_id, game_id) {
+    if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (!(await groupHasGame(group_id, game_id))) throw error.DATA_MEM_GROUP_DOES_NOT_HAVE_GAME
     // Remove game from games list
     delete groups[group_id].games[game_id];
-    if (groupHasGame(group_id, game_id)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
+    if (await groupHasGame(group_id, game_id)) throw error.DATA_MEM_GAME_NOT_DELETED_FROM_GROUP; else return true
 }
 
 /**
@@ -170,10 +172,10 @@ function deleteGameFromGroup(group_id, game_id) {
  * @returns [new_game_ID] if game is successfuly added to group
  */
 async function addGameToGroup(group_id, new_game) {
-    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-    if (groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
+    if (! (await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (await groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_GROUP_ALREADY_HAS_GAME
     groups[group_id].games[new_game.id] = new_game
-    if (!groupHasGame(group_id, new_game.id)) throw error.DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP; else return new_game.id
+    if (!(await groupHasGame(group_id, new_game.id))) throw error.DATA_MEM_COULD_NOT_ADD_GAME_TO_GROUP; else return new_game.id
 }
 
 /**
@@ -182,7 +184,7 @@ async function addGameToGroup(group_id, new_game) {
  * @returns list with all games from that group
  */
 async function getGroupGameNames(group_id) {
-    if (!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     let gamesGroup = []
     let originalGroupGames = groups[group_id].games
     for (let game_id of Object.keys(originalGroupGames)) {
@@ -192,13 +194,13 @@ async function getGroupGameNames(group_id) {
 
 }
 
-function getGroupDetails(group_id){
+async function getGroupDetails(group_id){
     
-    if(!groupExists(group_id)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
+    if(! (await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
     
-    let current_group = getGroup(group_id) 
+    let current_group = await getGroup(group_id) 
     
-    let array_games = getGroupGameNames(group_id) 
+    let array_games = await getGroupGameNames(group_id) 
 
     return { 
         'name': current_group.name, 
@@ -223,7 +225,7 @@ async function userExists(user_id){
  * @returns true if user has that group or false if not
  */
 async function userHasGroup(user_id, search_group_id) {
-    if (!userExists(user_id)) return false
+    if (!(await userExists(user_id))) return false
     return users[user_id].groups.includes(search_group_id) 
 }
 
@@ -234,13 +236,12 @@ async function userHasGroup(user_id, search_group_id) {
  */
 async function createUser(username){
     if (username === "") throw error.DATA_MEM_INVALID_USERNAME
-    /* Tem de ser substituido por UUID */
     let newID = crypto.randomUUID()
     users[newID] = {
         'username' : username,
         'groups' : []
     }
-    if (userExists(newID)) return newID; else return error.DATA_MEM_COULD_NOT_CREATE_USER
+    if (await userExists(newID)) return newID; else return error.DATA_MEM_COULD_NOT_CREATE_USER
 }
 
 /**
@@ -249,10 +250,10 @@ async function createUser(username){
  * @returns true if user is deleted successfuly or throws exception
  */
 async function deleteUser(user_id){
-    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    if (!(await userExists(user_id))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     delete users[user_id]
     // Make sure user got deleted
-    if (userExists(user_id)) throw error.DATA_MEM_USER_COULD_NOT_BE_DELETED; else return true
+    if (await userExists(user_id)) throw error.DATA_MEM_USER_COULD_NOT_BE_DELETED; else return true
 }
 
 /**
@@ -271,7 +272,7 @@ async function getUsers() {
  * @returns the user object
  */
 async function getUser(user_id){
-    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    if (!(await userExists(user_id))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     return users[user_id]
 }
 
@@ -281,10 +282,11 @@ async function getUser(user_id){
  * @param {group_id} Id of group we are associating
  */
 async function addGroupToUser(user_id, group_id){
-    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
-    if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
+    if (!(await userExists(user_id))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
+    if (await userHasGroup(user_id, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
     users[user_id].groups.push(group_id) 
-    if (!userHasGroup(user_id, group_id)) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return group_id
+    if (!(await userHasGroup(user_id, group_id))) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return group_id
 }
 
 /**
@@ -294,23 +296,25 @@ async function addGroupToUser(user_id, group_id){
  * @returns true if group is disassociated from user
  */
 async function deleteGroupFromUser(user_id, group_id) {
-    if (!userExists(user_id)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
-    if (!userHasGroup(user_id,group_id)) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
+    if (!(await userExists(user_id))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    if (!(await userHasGroup(user_id,group_id))) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
     // Remove group from users list 
     let user_groups = users[user_id].groups 
     user_groups.splice(user_groups.indexOf(group_id), 1);
-    if (userHasGroup(user_id, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return true
+    if (await userHasGroup(user_id, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return true
 }
 
 /**
  * Get all groups from a user
- * @param {user_ID} User ID 
- * @returns list with all groups [user_ID] is associated with
+ * @param {user_id} User ID 
+ * @returns list with all groups [user_id] is associated with
  */
-async function getUserGroups(user_ID) {
-    if (!userExists(user_ID)) throw error.DATA_MEM_USER_DOES_NOT_EXIST
-    deleteUnexistingGroups()
-    return users[user_ID].groups.map(group_id => {
+async function getUserGroups(user_id) {
+    if (!(await userExists(user_id))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    await deleteUnexistingGroups()
+    console.log(user_id)
+    console.log(users[user_id])
+    return users[user_id].groups.map(group_id => {
         return groups[group_id]
     })
 }
@@ -320,8 +324,8 @@ async function getUserGroups(user_ID) {
  */
 async function deleteUnexistingGroups() {
     for (let user of Object.values(users)) {
-        user.groups = user.groups.map(group_id => {
-            if (groupExists(group_id)) return group_id
+        user.groups = await user.groups.map(async group_id => {
+            if (await groupExists(group_id)) return group_id
         }).filter(group_id => group_id !== undefined)
     }
 } 
@@ -342,7 +346,6 @@ module.exports = {
     groupHasGame: groupHasGame, 
 
     getGroupDetails: getGroupDetails, 
-
 
     // User functions
     createUser: createUser,
