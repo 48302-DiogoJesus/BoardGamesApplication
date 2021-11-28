@@ -1,50 +1,124 @@
 'use strict';
 
+const errors = require('./borga-errors');
+
 module.exports = function (data_ext, data_int) {
 
-	// Juntar external e internal e exportar
-
 	/*------------------------------------------------------------ */
-	async function addGameToGroupByID(group_id, game_id){ 
+	async function executeAuthed(token, function_name, ...args) {
 		try {
+			if (!token) throw errors.WEB_API_NOT_AUTHENTICATED
+			if (!Object.keys(auth_imports).includes(function_name)) return null
+			// Make sure a username associated with [token] exists
+			let username = await getUsername(token)
+			console.log(function_name, args)
+			// Call requested function with proper username and arguments
+			return auth_imports[function_name](username, ...args)
+		} catch (err) { return err }
+	}
+
+	async function addGameToGroupByID(username, group_id, game_id){ 
+		try {
+			console.log("ADD GAME TO GROUP BY ID : ", username, game_id, group_id) 
             let game = await data_ext.getGameById(game_id) 
-            await data_int.addGameToGroup(group_id, game)
+            await data_int.addGameToGroup(username, group_id, game)
 			return (await data_int.getGroupDetails(group_id))
-        } catch (err) { return err }
+        } 
+		// Pass error to next layer
+		catch (err) { return err }
     }
-	
-	/*---------------------------------------------------------------*/
-	return {
+
+	/**
+	 * Get a username from it's token
+	 * @param {token} Authentication token able to identify a user
+	 * @returns username
+	 */
+	async function getUsername(token) {
+		try {
+			if (!token) throw errors.WEB_API_NOT_AUTHENTICATED
+			return (await data_int.tokenToUsername(token))
+		} 
+		// Pass error to next layer
+		catch (err) { return err }
+	}
+
+	/**
+	 * Deletes a username (Same as the one who makes the request)
+	 * @param {token} Authorization token
+	 * @param {username} Username of the user to delete
+	 */
+	async function deleteUser(token, username) {
+		try {
+			let this_username = await getUsername(token) 
+			// To avoid user A trying to delete user B
+			if (this_username !== username) throw errors.GLOBAL_NOT_AUTHORIZED
+			await data_int.deleteUser(username)
+		} catch (err) { return err }
+	}
+
+	const auth_imports = {
+		// GROUP FUNCTIONS
+		createGroup : data_int.createGroup,
+		deleteGroup : data_int.deleteGroup,
+		changeGroupName : data_int.changeGroupName,
+		deleteGameFromGroup : data_int.deleteGameFromGroup,
+
+		// GROUP GAMES FUNCTIONS
+		addGameToGroup : data_int.addGameToGroup, 
+		addGroupToUser : data_int.addGroupToUser,
+		deleteGroupFromUser : data_int.deleteGroupFromUser,
+		addGameToGroupByID,
+
+		// USER FUNCTIONS 
+		deleteUser
+	}
+
+	const non_auth_imports = {
 		// GAMES DATA RELATED FUNCTIONS
 		getGameById : data_ext.getGameById,
 		getGamesListByName : data_ext.getGamesListByName,
-		getPopularGamesList : data_ext.getPopularGamesList,
-		// DATA MEM RELATED FUNCTIONS
-		changeGroupName : data_int.changeGroupName,
-		changeGroupDescription : data_int.changeGroupDescription,
-    	createGroup : data_int.createGroup,
-	
-    	deleteGroup : data_int.deleteGroup,
-    	deleteGameFromGroup : data_int.deleteGameFromGroup,
+		getPopularGamesList : data_ext.getPopularGamesList,		
 
-    	getGroupGames : data_int.getGroupGames,
+		// GROUP GAMES FUNCTIONS
+    	getGroupGameNames : data_int.getGroupGameNames,
 		groupHasGame : data_int.groupHasGame,
 		getGroup : data_int.getGroup,
 		getGroups : data_int.getGroups,
 		getGroupDetails : data_int.getGroupDetails, 
 		getGroupGameNames : data_int.getGroupGameNames,
-		addGameToGroup : data_int.addGameToGroup, 
 
-		// USER RELATED FUNCTIONS
-		createUser: data_int.createUser,
-		deleteUser : data_int.deleteUser,
-		getUser : data_int.getUser,
-		addGroupToUser : data_int.addGroupToUser,
-		deleteGroupFromUser : data_int.deleteGroupFromUser,
-		getUserGroups : data_int.getUserGroups, 
+		// USER GROUPS
 		userHasGroup: data_int.userHasGroup,
+		getUserGroups : data_int.getUserGroups, 
 
-		// EXCLUSIVE SERVICES FUNCTIONS (USE BOTH DATA_INT AND DATA_EXT)
-		addGameToGroupByID
+		// USER FUNCTIONS
+		createUser: data_int.createUser,
+		getUser : data_int.getUser,
+
+		// TOKEN FUNCTIONS
+		tokenToUsername : data_int.tokenToUsername,
+
+		// EXCLUSIVE SERVICES FUNCTIONS
+		getUsername
+	}
+
+	const test_imports = {
+		// RESET FUNCTIONS
+		connectTokenWithUser : data_int.connectTokenWithUser,
+		resetGroups : data_int.resetGroups,
+		resetUsers : data_int.resetUsers,
+		resetTokens : data_int.resetTokens,
+		resetAll : async () => {
+			await data_int.resetGroups();
+			await data_int.resetUsers();
+			await data_int.resetTokens();
+		}
+	}
+	/*---------------------------------------------------------------*/
+	return {
+		...non_auth_imports,
+		...auth_imports,
+		...test_imports,
+		executeAuthed
 	};
 }

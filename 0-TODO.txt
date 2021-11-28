@@ -4,15 +4,12 @@
 - Remove nodemon
 
 // FINISH
-- Users key now is username
-- crypto goes to webapi
+- crypto goes to webapi and use getBearerToken function after services file complete
 - Create tokens object pointing to username:
-    create functions getBearerToken, tokenToUsername, usernameToToken
-- Pass some functions to services (see github)
+    create functions tokenToUsername, usernameToToken
 
 - Finish YAML OpenAPI file schemas
 
 // TESTS
-- Create default test users, groups, etc
-- Complete mock file (games data) and import it inside tests file
-- Use afterAll() to clear any changes
+- All functions which need auth change to new way
+- Do Mock file (games data) and import it inside tests file

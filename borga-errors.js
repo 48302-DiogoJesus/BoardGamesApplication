@@ -31,6 +31,16 @@ module.exports = {
             details: info
         }
     },
+    GLOBAL_MISSING_PARAM: {
+        code: 1,
+        http_code: 400,
+        message: 'Missing parameter'
+    },
+    GLOBAL_NOT_AUTHORIZED: {
+        code: 2,
+        http_code: 403,
+        message: 'Not Authorized'
+    },
     BGATLAS_UNAVAILABLE: {
         code: 101,
         http_code: 503,
@@ -155,5 +165,10 @@ module.exports = {
         code: 304,
         http_code: 400,
         message: 'Invalid user name'
+    },
+    WEB_API_NOT_AUTHENTICATED: {
+        code: 305,
+        http_code: 401,
+        message: 'Invalid authentication token'
     }
 };

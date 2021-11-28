@@ -13,6 +13,22 @@ module.exports = function (services, queue) {
 	router.use(express.json());
 
 	/**
+	 * Get the user access token from request
+	 * @param {req} Request object
+	 * @returns the token extracted from the request headers
+	 */
+	function getBearerToken(req) {
+		const auth = req.header('Authorization');
+		if (auth) {
+			const authData = auth.trim();
+			if (authData.substr(0,6).toLowerCase() === 'bearer') {
+				return authData.replace(/^bearer\s+/i, '');
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Handle Web Api Errors and pass them to client
 	 * @param {err} error object thrown by other functions
 	 * @param {req} request object 

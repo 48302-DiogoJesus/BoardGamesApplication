@@ -53,7 +53,7 @@ async function isAvailable() {
     return fetch(BOARD_GAMES_URI)
         .catch(_=> {throw error.BGATLAS_UNAVAILABLE})
         .then(res=> {
-            if (res.status == 403) throw error.BGATLAS_INVALID_ID
+            if (res.status == 403) throw error.BGATLAS_NOT_FOUND
             return
         })
 }
