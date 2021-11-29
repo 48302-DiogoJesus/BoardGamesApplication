@@ -150,8 +150,13 @@ async function getGamesListByName(name) {
     }).catch(_ => {throw error.BGATLAS_NOT_FOUND})
 }
 
+async function getGameByName(name) {
+    return (await getGameByName(name))[0]
+}
+
 module.exports = {
-    getGameById : getGameById,
-    getGamesListByName : getGamesListByName,
-    getPopularGamesList : getPopularGamesList
+    getGameById,
+    getGamesListByName,
+    getGameByName,
+    getPopularGamesList
 }

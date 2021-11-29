@@ -4,12 +4,13 @@
 - Remove nodemon
 
 // FINISH
+- getGameByName create new query route
 - crypto goes to webapi and use getBearerToken function after services file complete
 - Create tokens object pointing to username:
     create functions tokenToUsername, usernameToToken
 
-- Finish YAML OpenAPI file schemas
+- Finish YAML OpenAPI file schemas and test
 
 // TESTS
+- New tests for authentication
 - All functions which need auth change to new way
-- Do Mock file (games data) and import it inside tests file

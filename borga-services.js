@@ -11,7 +11,6 @@ module.exports = function (data_ext, data_int) {
 			if (!Object.keys(auth_imports).includes(function_name)) return null
 			// Make sure a username associated with [token] exists
 			let username = await getUsername(token)
-			console.log(function_name, args)
 			// Call requested function with proper username and arguments
 			return auth_imports[function_name](username, ...args)
 		} catch (err) { return err }
@@ -19,7 +18,6 @@ module.exports = function (data_ext, data_int) {
 
 	async function addGameToGroupByID(username, group_id, game_id){ 
 		try {
-			console.log("ADD GAME TO GROUP BY ID : ", username, game_id, group_id) 
             let game = await data_ext.getGameById(game_id) 
             await data_int.addGameToGroup(username, group_id, game)
 			return (await data_int.getGroupDetails(group_id))
@@ -77,6 +75,7 @@ module.exports = function (data_ext, data_int) {
 		// GAMES DATA RELATED FUNCTIONS
 		getGameById : data_ext.getGameById,
 		getGamesListByName : data_ext.getGamesListByName,
+		getGameByName :  data_int.getGameByName,
 		getPopularGamesList : data_ext.getPopularGamesList,		
 
 		// GROUP GAMES FUNCTIONS
