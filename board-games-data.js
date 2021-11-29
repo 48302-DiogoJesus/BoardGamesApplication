@@ -51,9 +51,9 @@ function buildQueryURL(command, args) {
  */
 async function isAvailable() {
     return fetch(BOARD_GAMES_URI)
-        .catch(_=> {throw error.BGATLAS_UNAVAILABLE})
+        .catch(_=> {throw error.EXT_API_UNAVAILABLE})
         .then(res=> {
-            if (res.status == 403) throw error.BGATLAS_NOT_FOUND
+            if (res.status == 403) throw error.EXT_API_NOT_FOUND
             return
         })
 }
@@ -99,7 +99,7 @@ async function fetchFromServer(command, args) {
     await isAvailable()
     let search_url = buildQueryURL(command, args)
     return fetch(search_url)
-    .catch(_=> {throw error.BGATLAS_UNEXPECTED_RESPONSE})
+    .catch(_=> {throw error.EXT_API_UNEXPECTED_RESPONSE})
     .then(res => res.json())
     
 }
@@ -115,7 +115,7 @@ async function getPopularGamesList(n) {
     .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
     .then(data => {
         let games = data.games
-        if (games == undefined) throw error.BGATLAS_UNEXPECTED_RESPONSE
+        if (games == undefined) throw error.EXT_API_UNEXPECTED_RESPONSE
         // Extract the Top n Games
         return buildGames(games.slice(0,n))
     }).catch(err => {throw error.GLOBAL_UNKNOWN_ERROR(err)})
@@ -129,10 +129,10 @@ async function getGameById(id) {
     return fetchFromServer("search_game_id", id)
         .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
         .then(data => {
-            if (data.count == 0) throw error.BGATLAS_NOT_FOUND
+            if (data.count == 0) throw error.EXT_API_NOT_FOUND
             let game = data.games[0]
             return buildGame(game)
-        }).catch(_ => {throw error.BGATLAS_NOT_FOUND})
+        }).catch(_ => {throw error.EXT_API_NOT_FOUND})
 }
 
 /**
@@ -144,10 +144,10 @@ async function getGamesListByName(name) {
     return fetchFromServer("search_game_name", name)
     .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
     .then(data => {
-        if (data.count == 0) throw error.BGATLAS_NOT_FOUND
+        if (data.count == 0) throw error.EXT_API_NOT_FOUND
         let games = data.games
         return buildGames(games.slice(0, 14))
-    }).catch(_ => {throw error.BGATLAS_NOT_FOUND})
+    }).catch(_ => {throw error.EXT_API_NOT_FOUND})
 }
 
 async function getGameByName(name) {

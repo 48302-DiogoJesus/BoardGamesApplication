@@ -2,6 +2,8 @@
 const express = require('express');
 const error = require('./borga-errors')
 
+const crypto = require('crypto')
+
 const YAML = require('yamljs')
 const openApi = require('swagger-ui-express');
 const openApiSpec = YAML.load('./docs/borga-spec.yaml');
@@ -53,7 +55,7 @@ module.exports = function (services, queue) {
 	 * @param {req} request object 
 	 * @param {res} response object
 	 */
-	async function handleGamesQueries(req, res) {
+	async function handleGameQueries(req, res) {
 		try {
 			// Extract first query key
 			let firstQuery = Object.keys(req.query)[0]
@@ -123,8 +125,8 @@ module.exports = function (services, queue) {
 			let newGroupName = req.body.name
 			let newGroupDescription = req.body.description
 			if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
-			let groupID = await services.createGroup(newGroupName, newGroupDescription)
-			// Add [groupID] to user.groups array ->[[groupdID,groupName],[]]
+			let groupID = await services.executeAuthed(getBearerToken(req),'createGroup', newGroupName, newGroupDescription)
+
 			res.status(201).json({
 				id : groupID
 			})
@@ -138,7 +140,8 @@ module.exports = function (services, queue) {
 			let id = req.params.id
 			if (!id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
-			let deleteStatus = await services.deleteGroup(id)
+			let deleteStatus = await services.executeAuthed(getBearerToken(req), 'deleteGroup', id)
+			
 			if (deleteStatus) res.sendStatus(204)
 		} catch (err) {
 			handleError(err, req, res)
@@ -148,13 +151,13 @@ module.exports = function (services, queue) {
 	async function handleEditGroup(req, res) {
 		try {
 			let id = req.body.id 
+			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 			let newName = req.body.name
 			let newDescription = req.body.description
-			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
 			if (!newName && !newDescription) throw error.WEB_API_INVALID_GROUP_DETAILS
-			if (newName) await services.changeGroupName(id, newName)
-			if (newDescription) await services.changeGroupDescription(id, newDescription)
+			if (newName) await services.executeAuthed(getBearerToken(req), 'changeGroupName', id, newName)
+			if (newDescription) await services.executeAuthed(getBearerToken(req), 'changeGroupDescription', id, newDescription)
 			res.status(204).json( { id : await services.getGroup(id) } )
 		} catch (err) {
 			handleError(err, req, res)
@@ -185,22 +188,21 @@ module.exports = function (services, queue) {
 		try {	
 			let newUserName = req.body.username
 			if (!newUserName) throw error.WEB_API_INVALID_USER_NAME
-			let newUserID = await services.createUser(newUserName)
-			// Later return the UUID token here so that user can store it in local storage
-			res.status(201).status().json({ newUserID })
+			let newToken = crypto.randomUUID()
+			let newTokenValidated = await services.createUser(newToken, newUserName)
+			
+			res.status(201).status().json({ newTokenValidated })
 		} catch (err) {
 			handleError(err, req, res)
 		}
 	} 
 
 	async function handleAddGameToGroup(req,res){
-		try{
+		try {
 			let new_game_id = req.query.game_id  
-			
 			let group_ID = req.params.id
+			let updatedGroup = await services.executeAuthed(getBearerToken(req), 'addGameToGroupByID', group_ID, new_game_id) 
 			
-			let updatedGroup = await services.addGameToGroupByID(group_ID, new_game_id) 
-
 			res.status(201).json(updatedGroup)
 		} catch (err) { 
 			handleError(err, req, res)
@@ -212,8 +214,7 @@ module.exports = function (services, queue) {
 
 			let game_id = req.query.game_id 
 			let group_id = req.params.id 
-
-			await services.deleteGameFromGroup(group_id, game_id) 
+			await services.executeAuthed(getBearerToken(req), 'deleteGameFromGroup', group_id, game_id) 
 
 			res.status(204).json(await services.getGroupDetails(group_id))
 
@@ -222,14 +223,13 @@ module.exports = function (services, queue) {
 		}
 	}
 
-	// Serve the API documents
+	// Serve the API documentation
 	router.use('/docs', openApi.serve);
 	router.get('/docs', openApi.setup(openApiSpec));
 
-
 	// PATHS HANDLING \\
 	// Resource: /games
-	router.get('/games', handleGamesQueries);
+	router.get('/games', handleGameQueries);
 
 	// Resource: /groups
 	router.get('/groups/', handleGetGroups)

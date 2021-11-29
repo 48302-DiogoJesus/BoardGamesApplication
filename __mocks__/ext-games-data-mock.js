@@ -65,11 +65,13 @@ const queries = {
 
 async function getGameById(game_id) {
     let game = games[game_id]
-    if (game == null) throw error.BGATLAS_NOT_FOUND
+    if (game == null) throw error.EXT_API_NOT_FOUND
     return game
 }
 
 async function getGamesListByName(name) {
+    let game = queries[name]
+    if (game == null) throw error.EXT_API_NOT_FOUND
     return queries[name]
 }
 const getPopularGamesList = getGamesListByName

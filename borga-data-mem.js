@@ -260,12 +260,14 @@ async function userHasGroup(username, search_group_id) {
  * @param {username} Username for the new user to create 
  * @returns user of the new ID if user is created successfuly or throws exception
  */
-async function createUser(username){
-    if (username === "") throw error.DATA_MEM_INVALID_USERNAME
+async function createUser(username, token){
+    if (username === "" || !username) throw error.DATA_MEM_INVALID_USERNAME
+    if (token === "" || !token) throw error.
+    tokens[token] = username
     users[username] = {
         'groups' : []
     }
-    if (await userExists(username)) return username; else return error.DATA_MEM_COULD_NOT_CREATE_USER
+    if (await userExists(username)) return token; else return error.DATA_MEM_COULD_NOT_CREATE_USER
 }
 
 /**

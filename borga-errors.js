@@ -41,17 +41,22 @@ module.exports = {
         http_code: 403,
         message: 'Not Authorized'
     },
-    BGATLAS_UNAVAILABLE: {
+    GLOBAL_INVALID_TOKEN: {
+        code: 3,
+        http_code: 400,
+        message: 'Invalid token provided'
+    },
+    EXT_API_UNAVAILABLE: {
         code: 101,
         http_code: 503,
         message: 'Board Game Altas API is currently offline'
     },
-    BGATLAS_UNEXPECTED_RESPONSE: {
+    EXT_API_UNEXPECTED_RESPONSE: {
         code: 102,
         http_code: 500,
         message: 'Board Game Atlas API gave an unexpected response'
     },
-    BGATLAS_NOT_FOUND: {
+    EXT_API_NOT_FOUND: {
         code: 103,
         http_code: 404,
         message: 'Invalid Board Game Atlas Game'

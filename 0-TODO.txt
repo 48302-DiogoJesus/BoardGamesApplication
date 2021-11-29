@@ -2,12 +2,10 @@
 - Export Postman collection as JSON to github 
 - Ask professor about "yamljs" dependency
 - Remove nodemon
+- Test the api with the tokens
 
 // FINISH
-- getGameByName create new query route
-- crypto goes to webapi and use getBearerToken function after services file complete
-- Create tokens object pointing to username:
-    create functions tokenToUsername, usernameToToken
+- getGameByName create new query route ( maybe not )
 
 - Finish YAML OpenAPI file schemas and test
 
