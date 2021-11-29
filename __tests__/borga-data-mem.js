@@ -38,7 +38,7 @@ describe('Group Tests', () => {
 
     test('Create group with empty name and description', async () => {
         try {
-            await services.createGroup(test_user)
+            await services.executeAuthed(test_token, 'createGroup')
         } catch (err) {
             expect(err).toBe(error.DATA_MEM_INVALID_GROUP_NAME)
         }
@@ -60,7 +60,7 @@ describe('Group Tests', () => {
 
     // changeGroupName
     test('Change group name if new name is empty', async () => {
-        let groupID = await services.createGroup(test_user, "Old Group", "New Description")
+        let groupID = await services.executeAuthed(test_token, 'createGroup', "Old Group", "New Description")
         try {
             await services.executeAuthed(test_token, 'changeGroupName', groupID, "")
         } catch (err) {
@@ -69,7 +69,7 @@ describe('Group Tests', () => {
     })
 
     test('Change group name if new name is not empty', async () => {
-        let groupID = await services.createGroup(test_user, "Old Group", "New Description")
+        let groupID = await services.executeAuthed(test_token, 'createGroup', "Old Group", "New Description")
         await services.executeAuthed(test_token,'changeGroupName', groupID, "New Group Name")
         expect((await services.getGroup(groupID)).name).toBe("New Group Name")
     })
@@ -92,7 +92,7 @@ describe('Group Tests', () => {
     })
 
     test('Delete an existing group', async () => {
-        let newGroupID = await services.createGroup(test_user, "New Group", "New Description")
+        let newGroupID = await services.executeAuthed(test_token, 'createGroup', "New Group", "New Description")
         await services.executeAuthed(test_token, 'deleteGroup', newGroupID)
         try {
             await services.getGroup(newGroupID)
@@ -142,7 +142,7 @@ describe('Group Games Tests', () => {
     
     // FIX THIS
     test('Get game names from valid group', async () => {
-        let groupID = await services.createGroup(test_user, "New Group", "New Description")
+        let groupID = await services.executeAuthed(test_token, 'createGroup', "New Group", "New Description")
         await services.executeAuthed(test_token, 'addGameToGroupByID', groupID, '898yJDStpO8X')
         await services.executeAuthed(test_token, 'addGameToGroupByID', groupID, 'yqR4PtpO8X')
         expect(JSON.stringify(await services.getGroupGameNames(groupID))).toBe(JSON.stringify(["Testing Game 3", "Testing Game"]))
@@ -212,7 +212,7 @@ describe('User Operations Tests ', () => {
 
     //Delete group from a user
     test('Delete group from a user', async () => {
-        let newGroupID = await services.createGroup(test_user, "A", "B")
+        let newGroupID = await services.executeAuthed(test_token, 'createGroup', "A", "B")
         await services.executeAuthed(test_token, 'addGroupToUser', newGroupID)
         expect(await services.userHasGroup(test_user, newGroupID)).toBe(true)
         await services.executeAuthed(test_token, 'deleteGroupFromUser', newGroupID)
@@ -221,11 +221,11 @@ describe('User Operations Tests ', () => {
 
     //Get Groups from Users
     test('Get groups id from users', async () => {
-        let newGroupID = await services.createGroup(test_user, "Novo Grupo", "nova descrição")
-        let newGroupID2 = await services.createGroup(test_user, "Novo Grupo 2", "nova descrição 2")
+        let newGroupID = await services.executeAuthed(test_token, 'createGroup', "Novo Grupo", "nova descrição")
+        let newGroupID2 = await services.executeAuthed(test_token, 'createGroup', "Novo Grupo 2", "nova descrição 2")
         // Only two of the following are actual groups
-        await services.addGroupToUser(test_user, newGroupID2)
-        await services.addGroupToUser(test_user, newGroupID)
+        await services.executeAuthed(test_token, 'addGroupToUser', newGroupID2)
+        await services.executeAuthed(test_token, 'addGroupToUser', newGroupID)
         // User will still have groups = [33, 90, 1, 2] even though 33 and 90 do not exist
         // The function below will only return the existing groups and remove others from user groups
         expect((await services.getUserGroups(test_user)).length).toBe(2)

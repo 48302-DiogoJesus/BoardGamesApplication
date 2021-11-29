@@ -54,6 +54,7 @@ module.exports = function (data_ext, data_int) {
 		} catch (err) { return err }
 	}
 
+	// Not exported since all this functions are executed from "this.executeAuthed()"
 	const auth_imports = {
 		// GROUP FUNCTIONS
 		createGroup : data_int.createGroup,
@@ -116,7 +117,6 @@ module.exports = function (data_ext, data_int) {
 	/*---------------------------------------------------------------*/
 	return {
 		...non_auth_imports,
-		...auth_imports,
 		...test_imports,
 		executeAuthed
 	};
