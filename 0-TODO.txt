@@ -1,17 +1,15 @@
 // DONT FORGET
 - Export Postman collection as JSON to github 
-- Ask professor about "yamljs" dependency
 - Remove nodemon
-- Test the api with the tokens
 
 // FINISH
 - getGameByName create new query route ( maybe not )
-
 - Finish YAML OpenAPI file schemas and test
 
 // TESTS
-- New tests for authentication
 - All functions which need auth change to new way
 
 // DUVIDAS
+Podemos usar a dependencia para correr o YAML bem
+Search Game by name pode retornar uma lista ou tem que ser só o primeiro da lista
 Entrega 1 pode conter já bocados do web-ui?
