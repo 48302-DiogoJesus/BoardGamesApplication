@@ -12,3 +12,6 @@
 // TESTS
 - New tests for authentication
 - All functions which need auth change to new way
+
+// DUVIDAS
+Entrega 1 pode conter já bocados do web-ui?
