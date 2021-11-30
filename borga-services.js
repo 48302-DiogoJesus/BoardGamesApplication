@@ -8,12 +8,16 @@ module.exports = function (data_ext, data_int) {
 	async function executeAuthed(token, function_name, ...args) {
 		try {
 			if (!token) throw errors.WEB_API_NOT_AUTHENTICATED
+			// Dont execute if operation does not require a authentication token
 			if (!Object.keys(auth_imports).includes(function_name)) return null
+
 			// Make sure a username associated with [token] exists
 			let username = await getUsername(token)
+			if (!username) throw errors.DATA_MEM_USER_DOES_NOT_EXIST
+
 			// Call requested function with proper username and arguments
 			return auth_imports[function_name](username, ...args)
-		} catch (err) { return err }
+		} catch (err) { throw err }
 	}
 
 	async function addGameToGroupByID(username, group_id, game_id){ 
@@ -23,7 +27,7 @@ module.exports = function (data_ext, data_int) {
 			return (await data_int.getGroupDetails(group_id))
         } 
 		// Pass error to next layer
-		catch (err) { return err }
+		catch (err) { throw err }
     }
 
 	/**
@@ -37,7 +41,7 @@ module.exports = function (data_ext, data_int) {
 			return (await data_int.tokenToUsername(token))
 		} 
 		// Pass error to next layer
-		catch (err) { return err }
+		catch (err) { throw err }
 	}
 
 	/**
@@ -47,11 +51,12 @@ module.exports = function (data_ext, data_int) {
 	 */
 	async function deleteUser(token, username) {
 		try {
-			let this_username = await getUsername(token) 
+			let this_username = await getUsername(token)	
+			if (!this_username) throw errors.DATA_MEM_USER_DOES_NOT_EXIST
 			// To avoid user A trying to delete user B
 			if (this_username !== username) throw errors.GLOBAL_NOT_AUTHORIZED
 			await data_int.deleteUser(username)
-		} catch (err) { return err }
+		} catch (err) { throw err }
 	}
 
 	// Not exported since all this functions are executed from "this.executeAuthed()"
