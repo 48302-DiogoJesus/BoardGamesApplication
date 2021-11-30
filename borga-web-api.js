@@ -139,10 +139,9 @@ module.exports = function (services, queue) {
 		try {
 			let id = req.params.id
 			if (!id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
-			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 			let deleteStatus = await services.executeAuthed(getBearerToken(req), 'deleteGroup', id)
-			
-			if (deleteStatus) res.sendStatus(204)
+
+			if (deleteStatus) res.sendStatus(200)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -152,6 +151,7 @@ module.exports = function (services, queue) {
 		try {
 			let id = req.body.id 
 			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
+			// Avoid going any further if group does not exist even though changeGroupName will throw if it does not
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 			let newName = req.body.name
 			let newDescription = req.body.description
@@ -189,9 +189,8 @@ module.exports = function (services, queue) {
 			let newUserName = req.body.username
 			if (!newUserName) throw error.WEB_API_INVALID_USER_NAME
 			let newToken = crypto.randomUUID()
-			let newTokenValidated = await services.createUser(newToken, newUserName)
-			
-			res.status(201).status().json({ newTokenValidated })
+			let newTokenValidated = await services.createUser(newUserName, newToken)
+			res.status(201).json({ 'token' : newTokenValidated })
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -216,7 +215,7 @@ module.exports = function (services, queue) {
 			let group_id = req.params.id 
 			await services.executeAuthed(getBearerToken(req), 'deleteGameFromGroup', group_id, game_id) 
 
-			res.status(204).json(await services.getGroupDetails(group_id))
+			res.status(200).json(await services.getGroupDetails(group_id))
 
 		} catch (err) {
 			handleError(err, req, res)
@@ -241,7 +240,6 @@ module.exports = function (services, queue) {
 	// Resource: '/groups/games'
 	router.post('/groups/:id/games',handleAddGameToGroup)
 	router.delete('/groups/:id/games', handleDeleteGameFromGroup)
-
 
 	// Resource: /users
 	router.post('/users/', handleCreateUser)
