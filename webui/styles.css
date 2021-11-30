@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+2&family=Ubuntu:wght@700&display=swap");
+* {
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+
+body {
+  background-color: black;
+  font-family: 'M PLUS 2', sans-serif;
+  margin: 0;
+}
+
+.top-nav-bar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+  background-color: green;
+  width: 100%;
+  max-height: 165px;
+  font-size: 20px;
+}
+
+.top-nav-bar ul.nav-links-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 20px;
+  list-style: none;
+}
+
+.top-nav-bar ul.nav-links-container > * {
+  margin: 10px;
+}
+
+.top-nav-bar ul.nav-links-container li {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+}
+
+.top-nav-bar ul.nav-links-container li .links {
+  font-weight: bold;
+  color: black;
+  text-decoration: none;
+  padding: 0;
+}
+
+.top-nav-bar ul.nav-links-container li .links:hover {
+  color: yellow;
+}
+
+.top-nav-bar ul.nav-links-container li #nav-separator {
+  border-radius: 20px;
+  border: 0;
+  background-color: black;
+  width: 4px;
+  height: 80%;
+}
+
+.top-nav-bar ul.nav-links-container li .search-field {
+  font-family: 'Ubuntu';
+  font-size: 1.1rem;
+  text-align: center;
+  border: 0;
+  border-width: 20px;
+  border-radius: 15px;
+  padding: 10px;
+  height: 15px;
+  width: 140px;
+  opacity: .7;
+  background-color: black;
+  color: green;
+}
+
+.top-nav-bar ul.nav-links-container li .search-field:hover {
+  opacity: .9;
+}
+/*# sourceMappingURL=styles.css.map */
