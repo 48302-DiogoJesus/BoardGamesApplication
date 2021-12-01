@@ -216,8 +216,8 @@ module.exports = function (services, queue) {
 		try{
 			let group_id = req.body.group_id 
 			let updatedUser = await services.executeAuthed(getBearerToken(req),'addGroupToUser', group_id)
-			//return getGroupDetails(updatedGroup) 
-			res.status(200).json(await services.getUser({'user' : updatedUser}))
+
+			res.status(200).json(await services.getUser(updatedUser))
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -227,7 +227,7 @@ module.exports = function (services, queue) {
 		try {
 			let group_id = req.body.group_id 
 			let updatedUser = await services.executeAuthed(getBearerToken(req),'deleteGroupFromUser', group_id)
-			res.status(200).json(await services.getUser({'user' : updatedUser}))
+			res.status(200).json(await services.getUser(updatedUser))
 		} catch (err) {
 			handleError(err, req, res)
 		}

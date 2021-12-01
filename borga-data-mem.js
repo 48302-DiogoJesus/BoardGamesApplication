@@ -48,6 +48,7 @@ var tokens = {
         }
     }
 */
+var groupID = 0
 var groups = {
     
 }
@@ -151,7 +152,7 @@ async function createGroup(username, group_name, group_description){
     if (!(await userExists(username))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (group_name === "") throw error.DATA_MEM_INVALID_GROUP_NAME
     if (group_description === "") throw error.DATA_MEM_INVALID_GROUP_DESCRIPTION
-    let newID = Object.keys(groups).length + 1
+    let newID = groupID++
     groups[newID] = {
         'owner' : username,
         'name' : group_name,
@@ -174,7 +175,7 @@ async function deleteGroup(username, group_id) {
     if (await groupOwner(group_id) !== username) throw error.GLOBAL_NOT_AUTHORIZED
     delete groups[group_id]
     // Make sure no user makes reference to unexisting groups
-    deleteUnexistingGroupsFromUsers()
+    await deleteUnexistingGroupsFromUsers()
     // Make sure group got deleted
     if (await groupExists(group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED; else return true
 }
@@ -304,7 +305,7 @@ async function getUserNames() {
  * @returns the user object
  */
 async function getUser(username){
-    if (!(await userExists(username))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
+    if (!(await userExists(username))) {console.log(username);throw error.DATA_MEM_USER_DOES_NOT_EXIST}
     return users[username]
 }
 
@@ -347,7 +348,6 @@ async function deleteGroupFromUser(username, group_id) {
  */
 async function getUserGroups(username) {
     if (!(await userExists(username))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
-    await deleteUnexistingGroups()
     return users[username].groups.map(group_id => {
         return groups[group_id]
     })
@@ -358,9 +358,11 @@ async function getUserGroups(username) {
  */
 async function deleteUnexistingGroupsFromUsers() {
     for (let user of Object.values(users)) {
-        user.groups = await user.groups.map(async group_id => {
-            if (await groupExists(group_id)) return group_id
-        }).filter(group_id => group_id !== undefined)
+        for (let group_id of user.groups) {
+            if (!(await groupExists(group_id))) {
+                user.groups.splice(user.groups.indexOf(group_id), 1)
+            }
+        }
     }
 } 
 
