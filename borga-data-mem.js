@@ -194,6 +194,11 @@ function getGroupGameNames(group_id) {
 
 }
 
+/**
+ * Get the details of the group
+ * @param {group_id} group_ID 
+ * @returns the correct way to display the object group
+ */
 function getGroupDetails(group_ID){
     
     if(!groupExists(group_ID)) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
