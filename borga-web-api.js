@@ -37,7 +37,11 @@ module.exports = function (services, queue) {
 	 * @param {res} response object
 	 */
 	function handleError(err, req, res) {
-		res.status(err.http_code).json({ cause: err });
+		if (!Object.keys(err).includes('http_code')) {
+			res.status(500).json({ cause: err });
+		} else {
+			res.status(err.http_code).json({ cause: err });
+		}
 	}
     
 	/* GAMES RELATED FUNCTIONS */
@@ -45,7 +49,7 @@ module.exports = function (services, queue) {
     const validGamesQueries = {
 		top : getTopNGames, 
 		id : getGameById,
-		name : getGamesByName
+		name : getGameByName
 	}
 
 	/**
@@ -109,10 +113,10 @@ module.exports = function (services, queue) {
 	 * @param {res} response object
 	 * Responds with a list of all the games found by searching external Games API for [name]
 	 */
-	async function getGamesByName(name, req, res) {
+	async function getGameByName(name, req, res) {
 		try {
-			let searchList = await services.getGamesListByName(name)
-			res.status(200).json({ searchList })
+			let game = await services.getGameByName(name)
+			res.status(200).json(game)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -126,7 +130,6 @@ module.exports = function (services, queue) {
 			let newGroupDescription = req.body.description
 			if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
 			let groupID = await services.executeAuthed(getBearerToken(req),'createGroup', newGroupName, newGroupDescription)
-
 			res.status(201).json({
 				id : groupID
 			})
@@ -140,14 +143,13 @@ module.exports = function (services, queue) {
 			let id = req.params.id
 			if (!id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
 			let deleteStatus = await services.executeAuthed(getBearerToken(req), 'deleteGroup', id)
-
 			if (deleteStatus) res.sendStatus(200)
 		} catch (err) {
 			handleError(err, req, res)
 		}
 	}
 
-	async function handleEditGroup(req, res) {
+	async function handleUpdateGroup(req, res) {
 		try {
 			let id = req.body.id 
 			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
@@ -158,6 +160,7 @@ module.exports = function (services, queue) {
 			if (!newName && !newDescription) throw error.WEB_API_INVALID_GROUP_DETAILS
 			if (newName) await services.executeAuthed(getBearerToken(req), 'changeGroupName', id, newName)
 			if (newDescription) await services.executeAuthed(getBearerToken(req), 'changeGroupDescription', id, newDescription)
+
 			res.status(204).json( { id : await services.getGroup(id) } )
 		} catch (err) {
 			handleError(err, req, res)
@@ -168,7 +171,8 @@ module.exports = function (services, queue) {
 		try{
 			let id = req.params.id 
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
-			res.status(200).json(await services.getGroupDetails(id))
+			let group = await services.getGroupDetails(id)
+			res.status(200).json(group)
 		}
 		catch(err){
 			handleError(err,req,res)
@@ -178,7 +182,7 @@ module.exports = function (services, queue) {
 	async function handleGetGroups(req, res) {
 		try {
 			let groups = await services.getGroups()
-			res.status(200).json({ groups })
+			res.status(200).json(groups)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -210,13 +214,12 @@ module.exports = function (services, queue) {
 
 	async function handleDeleteGameFromGroup(req, res) {
 		try { 
-
 			let game_id = req.query.game_id 
 			let group_id = req.params.id 
 			await services.executeAuthed(getBearerToken(req), 'deleteGameFromGroup', group_id, game_id) 
+			let group = await services.getGroupDetails(group_id)
 
-			res.status(200).json(await services.getGroupDetails(group_id))
-
+			res.status(200).json(group)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -235,7 +238,7 @@ module.exports = function (services, queue) {
 	router.get('/groups/:id', handleGetGroupById)
 	router.post('/groups/', handleCreateGroup)
 	router.delete('/groups/:id', handleDeleteGroup)
-	router.put('/groups/', handleEditGroup)
+	router.put('/groups/', handleUpdateGroup)
 
 	// Resource: '/groups/games'
 	router.post('/groups/:id/games',handleAddGameToGroup)
