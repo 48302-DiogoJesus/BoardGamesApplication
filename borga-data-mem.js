@@ -29,7 +29,7 @@ var tokens = {
 // Example of a Group:
 /*
     1 : {
-        owner: 'Manuel'
+        owner: 'Manuel',
         name : 'A Group',
         description: 'A description of the group',
         games: {
@@ -158,7 +158,9 @@ async function createGroup(username, group_name, group_description){
         'description': group_description,
         'games' : {}
     }
-    if (await groupExists(newID)) return newID; else return false
+    if (!await groupExists(newID)) throw error.DATA_MEM_COULD_NOT_CREATE_GROUP
+    await addGroupToUser(username, newID)
+    return newID
 }
 
 /**
@@ -171,6 +173,8 @@ async function deleteGroup(username, group_id) {
     if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (await groupOwner(group_id) !== username) throw error.GLOBAL_NOT_AUTHORIZED
     delete groups[group_id]
+    // Make sure no user makes reference to unexisting groups
+    deleteUnexistingGroupsFromUsers()
     // Make sure group got deleted
     if (await groupExists(group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED; else return true
 }
@@ -352,7 +356,7 @@ async function getUserGroups(username) {
 /**
  * Delete unexisting groups from all users groups list
  */
-async function deleteUnexistingGroups() {
+async function deleteUnexistingGroupsFromUsers() {
     for (let user of Object.values(users)) {
         user.groups = await user.groups.map(async group_id => {
             if (await groupExists(group_id)) return group_id
