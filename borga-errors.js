@@ -128,7 +128,7 @@ module.exports = {
     },
     DATA_MEM_USER_COULD_NOT_BE_DELETED: {
         code: 214,
-        htpp_code: 500,
+        http_code: 500,
         message: 'User could not be deleted'
     },
     DATA_MEM_USER_ALREADY_HAS_THIS_GROUP: {
