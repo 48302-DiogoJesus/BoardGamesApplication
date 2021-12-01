@@ -327,3 +327,11 @@ components:
           type: int
           description: Maximum players for this game
           example: 4
+    User:
+      type: object
+      required: 
+        - username
+      properties: 
+        username: 
+          type: string
+          example: "Zé"
