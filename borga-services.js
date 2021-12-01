@@ -67,7 +67,7 @@ module.exports = function (data_ext, data_int) {
 		changeGroupName : data_int.changeGroupName,
 		deleteGameFromGroup : data_int.deleteGameFromGroup,
 
-		// GROUP GAMES FUNCTIONS
+		// USER GROUP FUNCTIONS
 		addGameToGroup : data_int.addGameToGroup, 
 		addGroupToUser : data_int.addGroupToUser,
 		deleteGroupFromUser : data_int.deleteGroupFromUser,
@@ -98,7 +98,8 @@ module.exports = function (data_ext, data_int) {
 
 		// USER FUNCTIONS
 		createUser: data_int.createUser,
-		getUser : data_int.getUser,
+		getUser : data_int.getUser, 
+		
 
 		// TOKEN FUNCTIONS
 		tokenToUsername : data_int.tokenToUsername,

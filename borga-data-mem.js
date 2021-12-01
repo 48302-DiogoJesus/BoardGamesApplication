@@ -5,7 +5,7 @@ const error = require('./borga-errors')
 var users = {
     // TEST USER FOR POSTMAN REQUESTS
     "Zé" : {
-        groups : [1, 33]
+        groups : []
     }
 }
 // Users Structure \\
@@ -319,7 +319,7 @@ async function addGroupToUser(username, group_id){
     if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (await userHasGroup(username, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
     users[username].groups.push(group_id) 
-    if (!(await userHasGroup(username, group_id))) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return group_id
+    if (!(await userHasGroup(username, group_id))) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return username
 }
 
 /**
@@ -337,7 +337,7 @@ async function deleteGroupFromUser(username, group_id) {
     // Remove group from users list 
     let user_groups = users[username].groups 
     user_groups.splice(user_groups.indexOf(group_id), 1);
-    if (await userHasGroup(username, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return true
+    if (await userHasGroup(username, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return username
 }
 
 /**
@@ -402,7 +402,8 @@ module.exports = {
     // User Functions
     createUser,
     deleteUser,
-    getUser,
+    getUser, 
+    // User Group unctions
     addGroupToUser,
     deleteGroupFromUser,
     getUserGroups,
