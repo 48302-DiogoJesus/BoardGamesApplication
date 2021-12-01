@@ -6,6 +6,7 @@ const crypto = require('crypto')
 
 const YAML = require('yamljs')
 const openApi = require('swagger-ui-express');
+
 const openApiSpec = YAML.load('./docs/borga-spec.yaml');
 
 module.exports = function (services, queue) {
@@ -194,7 +195,52 @@ module.exports = function (services, queue) {
 		} catch (err) {
 			handleError(err, req, res)
 		}
+	}  
+
+	async function handleGetUser(req, res){
+
+		try {
+			let username = req.query.username
+
+			let user = await services.getUser(username) 
+
+			res.status(200).json(user)
+
+		} catch(err) {
+			handleError(err, req, res)
+		}
+
 	} 
+
+
+	async function handleAddGroupToUser(req,res){
+
+		try{
+			let group_id = req.body.group_id 
+			let updatedUser = await services.executeAuthed(getBearerToken(req),'addGroupToUser', group_id)
+			//return getGroupDetails(updatedGroup) 
+			res.status(200).json(await services.getUser(updatedUser))
+
+		} catch(err){
+			handleError(err,req,res)
+		}
+
+	} 
+	async function handleDeleteGroupFromUser(req,res){
+
+		try{
+			let group_id = req.body.group_id 
+			let updatedUser = await services.executeAuthed(getBearerToken(req),'deleteGroupFromUser', group_id)
+			//return getGroupDetails(updatedGroup) 
+			res.status(200).json(await services.getUser(updatedUser))
+
+		} catch(err){
+			handleError(err,req,res)
+		}
+
+	} 
+
+	/*-----------------------Group Game Functions--------------------------- */
 
 	async function handleAddGameToGroup(req,res){
 		try {
@@ -231,18 +277,23 @@ module.exports = function (services, queue) {
 	router.get('/games', handleGameQueries);
 
 	// Resource: /groups
-	router.get('/groups/', handleGetGroups)
+	router.get('/groups', handleGetGroups)
 	router.get('/groups/:id', handleGetGroupById)
-	router.post('/groups/', handleCreateGroup)
+	router.post('/groups', handleCreateGroup)
 	router.delete('/groups/:id', handleDeleteGroup)
-	router.put('/groups/', handleEditGroup)
+	router.put('/groups', handleEditGroup)
 
 	// Resource: '/groups/games'
 	router.post('/groups/:id/games',handleAddGameToGroup)
 	router.delete('/groups/:id/games', handleDeleteGameFromGroup)
 
 	// Resource: /users
-	router.post('/users/', handleCreateUser)
+	router.post('/users', handleCreateUser)  
+	router.get('/users',  handleGetUser)
+	
+	// Resource: /users/groups
+	router.post('/users/groups', handleAddGroupToUser) 
+	router.delete('/users/groups',  handleDeleteGroupFromUser)
 
 	return router;
 };
