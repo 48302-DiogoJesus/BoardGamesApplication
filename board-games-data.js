@@ -101,7 +101,6 @@ async function fetchFromServer(command, args) {
     return fetch(search_url)
     .catch(_=> {throw error.EXT_API_UNEXPECTED_RESPONSE})
     .then(res => res.json())
-    
 }
 
 // MAIN FUNCTIONS \\
@@ -136,23 +135,35 @@ async function getGameById(id) {
 }
 
 /**
- * Get a game object from a Game name search
+ * Get a game objects list from a Game name search
  * @param {name} string to search for in the API by using the query "name=[name]"
- * @returns a promise with a list of the first 10 game objects obtained by searching for [name]
+ * @returns a promise with a list of the first 15 game objects obtained by searching for [name]
  */
 async function getGamesListByName(name) {
     return fetchFromServer("search_game_name", name)
     .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
     .then(data => {
         if (data.count == 0) throw error.EXT_API_NOT_FOUND
-        let games = data.games
-        return buildGames(games.slice(0, 14))
+        let games = data.games.slice(0, 14)
+        return buildGames(games)
     }).catch(_ => {throw error.EXT_API_NOT_FOUND})
 }
 
-async function getGameByName(name) {
-    return (await getGameByName(name))[0]
+/**
+ * Get a game object from a Game name search
+ * @param {name} string to search for in the API by using the query "name=[name]"
+ * @returns a promise which returns a game object if game was found or throws if it was not found
+ */
+ async function getGameByName(name) {
+    return fetchFromServer("search_game_name", name)
+    .catch(err => err) // Capture the error throwed by "fetchFromServer and pass it on"
+    .then(data => {
+        if (data.count == 0) throw error.EXT_API_NOT_FOUND
+        let game = data.games[0]
+        return buildGame(game)
+    }).catch(_ => {throw error.EXT_API_NOT_FOUND})
 }
+
 
 module.exports = {
     getGameById,
