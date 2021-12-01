@@ -32,7 +32,7 @@ paths:
           required: false
           schema:
             type: string
-            example: "TAAifFP590"
+            example: "?id=TAAifFP590"
       parameters:
         - name: name
           in: query
@@ -48,12 +48,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookResponse"
-        
   /api/groups:
     get:
       tags:
         - Groups
-      summary: Get a group by its ID
+      summary: Get a group information
       description: Get a group by its ID
       parameters:
         - name: id
@@ -70,11 +69,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookListResponse"
+    delete:
+      tags:
+        - Groups
+      summary: Delete a group
+      description: Delete a group by its ID
+      security:
+      - bearerAuth: []
+      parameters:
+        - name: id
+          in: params
+          description: ID of the group to delete
+          required: false
+          schema:
+            type: string
+            example: "/groups/2"
+      responses:
+        200:
+          description: The personal list of books
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookListResponse"
     get:
       tags:
         - Groups
-      summary: List all existing groups
-      description: Get all groups
+      summary: Get all groups
+      description: List all existing groups
       responses:
         200:
           description: The personal list of books
@@ -84,15 +105,18 @@ paths:
                 $ref: "#/components/schemas/BookListResponse"
     post:
       tags:
-        - MyBooks
-      summary: Add a book to the personal collection
+        - Groups
+      summary: Create new group
+      description: Creates a new group with provided information
+      security:
+      - bearerAuth: []
       requestBody:
-        description: Book id of a book to be added to the personal collection
+        description: Information to initialize the new group with
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BookId"
+              $ref: "#/components/schemas/GroupData"
       responses:
         200:
           description: The book is now in the collection
@@ -100,32 +124,43 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookAddedResponse"
-        400:
-          description: A book with such id does not exist
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
-        502:
-          description: Google Books API is not responding
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
+    put:
+      tags: 
+        - Groups
+      summary: Update information about a group  
+      description: Update information about an existing group
+      security:
+      - bearerAuth: []
+      requestBody:
+        description: Information to initialize the new group with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupData"
+    responses:
+      200:
+        description: The book is now in the collection
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookAddedResponse"
   /api/groups/games:
-    get:
+    post:
       tags:
-        - MyBooks
-      summary: Find book by ID in the personal collection
-      description: Returns a single book
+        - Group Games
+      summary: Add a game to a group
+      description: Adds a game to a group by it's ID
+      security:
+      - bearerAuth: []
       parameters:
-        - name: bookId
-          in: path
-          description: ID of book to return
+        - name: game_id
+          in: query
+          description: ID of the game to add to group
           required: true
           schema:
             type: string
-          example: Ho3JtwEACAAJ
+          example: "?game_id=TAAifFP590"
       responses:
         200:
           description: Book found
@@ -133,162 +168,109 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BookResponse"
-        404:
-          description: Book not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
-    delete:
+    post:
       tags:
-        - MyBooks
-      summary: Delete book by ID
-      description: Deletes a book from the personal collection
+        - Group Games
+      summary: Delete a game from a group
+      description: Deletes a game from a group by it's ID
+      security:
+      - bearerAuth: []
       parameters:
-        - name: bookId
-          in: path
-          description: ID of book to delete
+        - name: game_id
+          in: params
+          description: ID of the game to remove from group
           required: true
           schema:
             type: string
-          example: Ho3JtwEACAAJ
+          example: "?game_id=TAAifFP590"
       responses:
         200:
-          description: Book deleted
+          description: Book found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookId"
-        404:
-          description: Book not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
+                $ref: "#/components/schemas/BookResponse"
   /api/users:
-    get:
+    post:
       tags:
-        - MyBooks
-      summary: Find book by ID in the personal collection
-      description: Returns a single book
-      parameters:
-        - name: bookId
-          in: path
-          description: ID of book to return
-          required: true
-          schema:
-            type: string
-          example: Ho3JtwEACAAJ
+        - Users
+      summary: Create a new user
+      description: Creates a new user with the information given
+      requestBody:
+        description: Information to initialize the new user with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserData"
       responses:
         200:
           description: Book found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookResponse"
-        404:
-          description: Book not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
-    delete:
-      tags:
-        - MyBooks
-      summary: Delete book by ID
-      description: Deletes a book from the personal collection
-      parameters:
-        - name: bookId
-          in: path
-          description: ID of book to delete
-          required: true
-          schema:
-            type: string
-          example: Ho3JtwEACAAJ
-      responses:
-        200:
-          description: Book deleted
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BookId"
-        404:
-          description: Book not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AppError"
+                $ref: "#/components/schemas/BookResponse" 
 components:
+  securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
   schemas:
-    AppErrorInfo:
-      description: Additional information about the error
-      nullable: true
-      anyOf:
-        - type: object
-        - type: string
-        - type: integer
-        - type: number
-      example: "..."
     AppError:
       type: object
       description: Application error
       required:
-        - code
-        - name
+        - internal_code
+        - http_code
         - message
       properties:
-        code:
+        internal_code:
           type: number
           format: int32
           description: Internal error code
-          example: 1000
-        name:
-          type: string
-          description: Internal error name
-          example: FAIL
+          example: 102
+        http_code:
+          type: number
+          format: int32
+          description: Http error code
+          example: 500
         message:
           type: string
-          description: Error description message
-          example: An error occurred
-        info:
-          $ref: "#/components/schemas/AppErrorInfo"
-    BookAddedResponse:
+          description: Error descriptive message
+          example: Could not create group
+    Group:
       type: object
-      description: Book successfully added to list
-      required:
-        - bookId
-      properties:
-        bookId:
+      description: A group of games
+      properties: 
+        owner: 
           type: string
-        added:
+        name:
           type: string
-          enum:
-            - yes
-            - no
-    BookResponse:
+        description:
+          type:  string
+        games: 
+          type: array
+          items: 
+            type: string
+            description: Name of a game
+    GroupsList:
       type: object
-      description: Response with a book
-      properties:
-        book:
-          $ref: "#/components/schemas/Book"
-    BookListResponse:
-      type: object
-      description: Response with a list of books
+      description: Response with a list of groups
       properties:
         books:
           type: array
           items:
-            $ref: "#/components/schemas/Book"
+            $ref: "#/components/schemas/Group"
     GameID:
       type: object
       description: Game ID
       required:
-        - bookId
+        - game_id
       properties:
-        bookId:
+        game_id:
           type: string
-          description: Internal book id
-          example: Ho3JtwEACAAJ
+          description: Game ID
+          example: TAAifFP590
     Game:
       type: object
       description: Game data

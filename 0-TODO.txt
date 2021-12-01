@@ -1,10 +1,15 @@
 // DONT FORGET
-- Complete all Postman tests and export collection as JSON to github 
-- Uncomment documentation lines in web-api (because yaml not working)
+- Export Postman collection as JSON to github 
+- Remove nodemon
 
 // FINISH
-- Finish YAML OpenAPI file
+- getGameByName create new query route ( maybe not )
+- Finish YAML OpenAPI file schemas and test
 
 // TESTS
-- Make all tests be over the services file
-- Make the unit tests for the games-data not depend on Game Atlas
+- All functions which need auth change to new way
+
+// DUVIDAS
+Podemos usar a dependencia para correr o YAML bem
+Search Game by name pode retornar uma lista ou tem que ser só o primeiro da lista
+Entrega 1 pode conter já bocados do web-ui?
