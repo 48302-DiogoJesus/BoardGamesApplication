@@ -43,16 +43,34 @@ paths:
             example: "?name=catan"
       responses:
         200:
-          description: A book has been found
+          description: Game Found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookResponse"
+                $ref: "#/components/schemas/Game"
+        200:
+          description: Games Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GamesList"
   /api/groups:
     get:
       tags:
         - Groups
-      summary: Get a group information
+      summary: Get all groups
+      description: List all existing groups
+      responses:
+        200:
+          description: Groups List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupsList"
+    get:
+      tags:
+        - Groups
+      summary: Get group information
       description: Get a group by its ID
       parameters:
         - name: id
@@ -64,11 +82,11 @@ paths:
             example: "/groups/2"
       responses:
         200:
-          description: The personal list of books
+          description: A group has been found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookListResponse"
+                $ref: "#/components/schemas/Group"
     delete:
       tags:
         - Groups
@@ -86,23 +104,7 @@ paths:
             example: "/groups/2"
       responses:
         200:
-          description: The personal list of books
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BookListResponse"
-    get:
-      tags:
-        - Groups
-      summary: Get all groups
-      description: List all existing groups
-      responses:
-        200:
-          description: The personal list of books
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BookListResponse"
+          description: Group Deleted
     post:
       tags:
         - Groups
@@ -118,12 +120,8 @@ paths:
             schema:
               $ref: "#/components/schemas/GroupData"
       responses:
-        200:
-          description: The book is now in the collection
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BookAddedResponse"
+        201:
+          description: Group Created
     put:
       tags: 
         - Groups
@@ -137,7 +135,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GroupData"
+              $ref: "#/components/schemas/GroupID"
     responses:
       200:
         description: The book is now in the collection
@@ -204,18 +202,31 @@ paths:
             schema:
               $ref: "#/components/schemas/UserData"
       responses:
-        200:
-          description: Book found
+        201:
+          description: User Created Successfuly
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookResponse" 
+                $ref: "#/components/schemas/Token" 
 components:
   securitySchemes:
       bearerAuth:
         type: http
         scheme: bearer
   schemas:
+    Token: 
+      type: object
+      description: An access token generated upon user creation
+      properties:
+        token: 
+          type: string
+          description: An auth token used to identify a user
+          example: "3c184965-cc3e-44d5-a5b1-b36ae47819fa"
+    GamesList:
+      type: array
+      description: A list of Games
+        items:
+          $ref: "#/components/schemas/Game"
     AppError:
       type: object
       description: Application error
@@ -241,6 +252,11 @@ components:
     Group:
       type: object
       description: A group of games
+      required: 
+        - owner
+        - name
+        - description
+        - games
       properties: 
         owner: 
           type: string
@@ -257,19 +273,18 @@ components:
       type: object
       description: Response with a list of groups
       properties:
-        books:
+        groups:
           type: array
           items:
             $ref: "#/components/schemas/Group"
-    GameID:
+    ID:
       type: object
       description: Game ID
       required:
-        - game_id
+        - id
       properties:
-        game_id:
+        id:
           type: string
-          description: Game ID
           example: TAAifFP590
     Game:
       type: object
@@ -285,11 +300,11 @@ components:
       properties:
         id:
           type: string
-          description: Game id
+          description: Game ID
           example: TAAifFP590
         name:
           type: string
-          description: Game name
+          description: Game Name
           example: Root
         url:
           type: string
