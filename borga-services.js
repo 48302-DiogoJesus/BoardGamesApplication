@@ -81,7 +81,7 @@ module.exports = function (data_ext, data_int) {
 		// GAMES DATA RELATED FUNCTIONS
 		getGameById : data_ext.getGameById,
 		getGamesListByName : data_ext.getGamesListByName,
-		getGameByName :  data_int.getGameByName,
+		getGameByName :  data_ext.getGameByName,
 		getPopularGamesList : data_ext.getPopularGamesList,		
 
 		// GROUP GAMES FUNCTIONS
