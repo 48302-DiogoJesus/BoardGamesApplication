@@ -151,6 +151,11 @@ module.exports = {
         http_code: 500,
         message: 'Group was not deleted from user groups'
     },
+    DATA_MEM_USER_ALREADY_EXISTS: {
+        code: 219,
+        http_code: 409,
+        message: 'A user with that username already exists'
+    },
     WEB_API_INVALID_QUERY: {
         code: 301,
         http_code: 400,

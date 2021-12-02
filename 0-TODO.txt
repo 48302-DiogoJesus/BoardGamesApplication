@@ -8,8 +8,6 @@
 - Create tests to expect authentication errors
 
 // DUVIDAS
-Postman "/Groups/Games/" recece JSON object com group_id e game_id (game to remove/add) ou como está agora ?
-Podemos usar a dependencia para correr o YAML bem e nodemon
 Search Game by name pode retornar uma lista ou tem que ser só o primeiro da lista
 YAML como definir erros sendo que temos muitos tipos de erros
 Entrega 1 pode conter já bocados do web-ui?

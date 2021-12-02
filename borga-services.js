@@ -58,6 +58,7 @@ module.exports = function (data_ext, data_int) {
 			await data_int.deleteUser(username)
 		} catch (err) { throw err }
 	}
+	
 
 	// Not exported since all this functions are executed from "this.executeAuthed()"
 	const auth_imports = {
