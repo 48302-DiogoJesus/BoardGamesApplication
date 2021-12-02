@@ -141,9 +141,9 @@ module.exports = function (services, queue) {
 
 	async function handleDeleteGroup(req, res) {
 		try {
-			let id = req.params.id
-			if (!id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
-			let deleteStatus = await services.executeAuthed(getBearerToken(req), 'deleteGroup', id)
+			let group_id = req.params.group_id
+			if (!group_id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
+			let deleteStatus = await services.executeAuthed(getBearerToken(req), 'deleteGroup', group_id)
 			if (deleteStatus) res.sendStatus(200)
 		} catch (err) {
 			handleError(err, req, res)
@@ -152,7 +152,7 @@ module.exports = function (services, queue) {
 
 	async function handleUpdateGroup(req, res) {
 		try {
-			let id = req.body.id 
+			let id = req.params.group_id 
 			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
 			// Avoid going any further if group does not exist even though changeGroupName will throw if it does not
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
@@ -170,9 +170,9 @@ module.exports = function (services, queue) {
 
 	async function handleGetGroupById(req, res){
 		try {
-			let id = req.params.id 
-			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
-			let group = await services.getGroupDetails(id)
+			let group_id = req.params.group_id
+			if (!(await services.getGroup(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
+			let group = await services.getGroupDetails(group_id)
 			res.status(200).json(group)
 		}
 		catch(err){
@@ -237,8 +237,8 @@ module.exports = function (services, queue) {
 
 	async function handleAddGameToGroup(req,res){
 		try {
-			let new_game_id = req.query.game_id  
-			let group_ID = req.params.id
+			let new_game_id = req.body.game_id  
+			let group_ID = req.params.group_id
 			let updatedGroup = await services.executeAuthed(getBearerToken(req), 'addGameToGroupByID', group_ID, new_game_id) 
 			
 			res.status(201).json(updatedGroup)
@@ -248,9 +248,9 @@ module.exports = function (services, queue) {
 	} 
 
 	async function handleDeleteGameFromGroup(req, res) {
-		try { 
-			let game_id = req.query.game_id 
-			let group_id = req.params.id 
+		try {
+			let game_id = req.params.game_id 
+			let group_id = req.params.group_id
 			await services.executeAuthed(getBearerToken(req), 'deleteGameFromGroup', group_id, game_id) 
 			let group = await services.getGroupDetails(group_id)
 
@@ -270,14 +270,14 @@ module.exports = function (services, queue) {
 
 	// Resource: /groups
 	router.get('/groups', handleGetGroups)
-	router.get('/groups/:id', handleGetGroupById)
+	router.get('/groups/:group_id', handleGetGroupById)
 	router.post('/groups', handleCreateGroup)
-	router.delete('/groups/:id', handleDeleteGroup)
-	router.put('/groups', handleUpdateGroup)
+	router.delete('/groups/:group_id', handleDeleteGroup)
+	router.put('/groups/:group_id', handleUpdateGroup)
 
 	// Resource: '/groups/games'
-	router.post('/groups/:id/games',handleAddGameToGroup)
-	router.delete('/groups/:id/games', handleDeleteGameFromGroup)
+	router.post('/groups/:group_id/games',handleAddGameToGroup)
+	router.delete('/groups/:group_id/games/:game_id', handleDeleteGameFromGroup)
 
 	// Resource: /users
 	router.post('/users', handleCreateUser)  
