@@ -48,6 +48,7 @@ var tokens = {
         }
     }
 */
+var newID = 0
 var groups = {
     
 }
@@ -151,14 +152,13 @@ async function createGroup(username, group_name, group_description){
     if (!(await userExists(username))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     if (group_name === "") throw error.DATA_MEM_INVALID_GROUP_NAME
     if (group_description === "") throw error.DATA_MEM_INVALID_GROUP_DESCRIPTION
-    let newID = Object.keys(groups).length
-    groups[newID] = {
+    groups[++newID] = {
         'owner' : username,
         'name' : group_name,
         'description': group_description,
         'games' : {}
     }
-    if (!await groupExists(newID)) throw error.DATA_MEM_COULD_NOT_CREATE_GROUP
+    if (!(await groupExists(newID))) throw error.DATA_MEM_COULD_NOT_CREATE_GROUP
     await addGroupToUser(username, newID)
     return newID
 }
@@ -259,7 +259,6 @@ async function userExists(username){
  */
 async function userHasGroup(username, search_group_id) {
     if (!(await userExists(username))) return false
-    console.log(users[username].groups)
     return users[username].groups.includes(parseInt(search_group_id)) 
 }
 
@@ -332,13 +331,13 @@ async function addGroupToUser(username, group_id){
  */
 async function deleteGroupFromUser(username, group_id) {
     if (!(await userExists(username))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
-    // COMMENTED BECAUSE WE WANT THE USER TO BE ABLE TO HAVE GROUPS FROM OTHER USERS
-    // INSIDE HIS PERSONAL GROUPS
+    // COMMENTED BECAUSE WE WANT THE USER TO BE ABLE TO HAVE GROUPS FROM OTHER USERS INSIDE HIS PERSONAL GROUPS
     // if (await groupOwner(group_id) !== username) throw error.GLOBAL_NOT_AUTHORIZED
     if (!(await userHasGroup(username,group_id))) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
-    // Remove group from users list 
-    let user_groups = users[username].groups 
-    user_groups.splice(user_groups.indexOf(group_id), 1);
+    // Remove group from users list
+    console.log(users[username].groups.indexOf(parseInt(group_id)))
+    users[username].groups.splice(users[username].groups.indexOf(parseInt(group_id)), 1);
+    return username;
 }
 
 /**
