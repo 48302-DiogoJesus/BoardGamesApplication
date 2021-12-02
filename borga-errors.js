@@ -175,10 +175,5 @@ module.exports = {
         code: 304,
         http_code: 400,
         message: 'Invalid user name'
-    },
-    WEB_API_NOT_AUTHENTICATED: {
-        code: 305,
-        http_code: 401,
-        message: 'Invalid authentication token'
     }
 };

@@ -259,7 +259,8 @@ async function userExists(username){
  */
 async function userHasGroup(username, search_group_id) {
     if (!(await userExists(username))) return false
-    return users[username].groups.includes(search_group_id) 
+    console.log(users[username].groups)
+    return users[username].groups.includes(parseInt(search_group_id)) 
 }
 
 /**
@@ -338,7 +339,6 @@ async function deleteGroupFromUser(username, group_id) {
     // Remove group from users list 
     let user_groups = users[username].groups 
     user_groups.splice(user_groups.indexOf(group_id), 1);
-    if (await userHasGroup(username, group_id)) throw error.DATA_MEM_GROUP_NOT_DELETED_FROM_USER; else return username
 }
 
 /**
@@ -402,6 +402,7 @@ module.exports = {
     createUser,
     deleteUser,
     getUser, 
+
     // User Group unctions
     addGroupToUser,
     deleteGroupFromUser,

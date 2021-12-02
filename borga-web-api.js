@@ -203,7 +203,7 @@ module.exports = function (services, queue) {
 
 	async function handleGetUser(req, res){
 		try {
-			let username = req.query.username
+			let username = req.params.username
 			let user = await services.getUser(username) 
 
 			res.status(200).json(user)
@@ -225,8 +225,9 @@ module.exports = function (services, queue) {
 
 	async function handleDeleteGroupFromUser(req,res){
 		try {
-			let group_id = req.body.group_id 
+			let group_id = req.params.group_id 
 			let updatedUser = await services.executeAuthed(getBearerToken(req),'deleteGroupFromUser', group_id)
+			
 			res.status(200).json(await services.getUser(updatedUser))
 		} catch (err) {
 			handleError(err, req, res)
@@ -281,11 +282,11 @@ module.exports = function (services, queue) {
 
 	// Resource: /users
 	router.post('/users', handleCreateUser)  
-	router.get('/users',  handleGetUser)
+	router.get('/users/:username',  handleGetUser)
 	
 	// Resource: /users/groups
 	router.post('/users/groups', handleAddGroupToUser) 
-	router.delete('/users/groups',  handleDeleteGroupFromUser)
+	router.delete('/users/groups/:group_id',  handleDeleteGroupFromUser)
 
 	return router;
 };
