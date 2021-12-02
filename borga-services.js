@@ -7,7 +7,7 @@ module.exports = function (data_ext, data_int) {
 	/*------------------------------------------------------------ */
 	async function executeAuthed(token, function_name, ...args) {
 		try {
-			if (!token) throw errors.WEB_API_NOT_AUTHENTICATED
+			if (!token) throw errors.GLOBAL_INVALID_TOKEN
 			// Dont execute if operation does not require a authentication token
 			if (!Object.keys(auth_imports).includes(function_name)) return null
 
@@ -37,7 +37,7 @@ module.exports = function (data_ext, data_int) {
 	 */
 	async function getUsername(token) {
 		try {
-			if (!token) throw errors.WEB_API_NOT_AUTHENTICATED
+			if (!token) throw errors.GLOBAL_INVALID_TOKEN
 			return (await data_int.tokenToUsername(token))
 		} 
 		// Pass error to next layer

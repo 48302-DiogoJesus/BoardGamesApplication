@@ -3,6 +3,7 @@
 
 // FINISH
 - Finish YAML OpenAPI file schemas and test
+- deleteGroupFromUser FIX BUG
 
 // TESTS
 - Create tests to expect authentication errors
