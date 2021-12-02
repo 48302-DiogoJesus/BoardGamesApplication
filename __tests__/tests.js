@@ -1,5 +1,4 @@
 const borga_data_mem = require('../borga-data-mem')
-const board_games_data = require('../board-games-data')
 const mock_board_games_data = require('ext-games-data-mock')
 
 const services = require('../borga-services')(mock_board_games_data, borga_data_mem) 
@@ -229,5 +228,26 @@ describe('User Operations Tests ', () => {
         // User will still have groups = [33, 90, 1, 2] even though 33 and 90 do not exist
         // The function below will only return the existing groups and remove others from user groups
         expect((await services.getUserGroups(test_user)).length).toBe(2)
+    })
+})
+
+
+describe('Authentication Tests ', () => {
+
+    //Create group with an invalid token
+    test('Inalid Authentication', async () => {
+        expect(await services.executeAuthed('UNEXISTING_TOKEN', 'createGroup', "Novo Grupo", "nova descrição")).toBe(error.GLOBAL_INVALID_TOKEN)
+    })
+    
+    //Delete group with an invalid token
+    test('Delete a group with a invalid token', async () => {
+        expect(await services.executeAuthed('UNEXISTING_TOKEN', 'deleteGroup', 0)).toBe(error.GLOBAL_INVALID_TOKEN)
+    })
+
+    //Delete group that you don´t own
+    test('Delete a group that you don\'t own', async () => {
+        await services.createUser("Miguel", "NEW_TOKEN")
+        await services.executeAuthed("NEW_TOKEN", 'createGroup', "Group_Name", "Group_Description")
+        expect(await services.executeAuthed(test_token, 'deleteGroup', 0)).toBe(error.GLOBAL_NOT_AUTHORIZED)
     })
 })
