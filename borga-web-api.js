@@ -127,13 +127,13 @@ module.exports = function (services, queue) {
 
 	async function handleCreateGroup(req, res) {
 		try {
+			// Make sure token is valid
+			await services.getUsername(getBearerToken(req))
 			let newGroupName = req.body.name
 			let newGroupDescription = req.body.description
 			if ((newGroupName == undefined) && (newGroupDescription == undefined)) throw error.WEB_API_INVALID_GROUP_DETAILS
 			let groupID = await services.executeAuthed(getBearerToken(req),'createGroup', newGroupName, newGroupDescription)
-			res.status(201).json({
-				id : groupID
-			})
+			res.status(201).json({ id : groupID })
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -141,10 +141,12 @@ module.exports = function (services, queue) {
 
 	async function handleDeleteGroup(req, res) {
 		try {
+			// Make sure token is valid
+			await services.getUsername(getBearerToken(req))
 			let group_id = req.params.group_id
-			if (!group_id) throw error.WEB_API_INSUFICIENT_GROUP_INFORMATION
-			let deleteStatus = await services.executeAuthed(getBearerToken(req), 'deleteGroup', group_id)
-			if (deleteStatus) res.sendStatus(200)
+			if (!group_id) throw error.GLOBAL_MISSING_PARAM
+			await services.executeAuthed(getBearerToken(req), 'deleteGroup', group_id)
+			res.sendStatus(200)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -152,8 +154,10 @@ module.exports = function (services, queue) {
 
 	async function handleUpdateGroup(req, res) {
 		try {
+			// Make sure token is valid
+			await services.getUsername(getBearerToken(req))
 			let id = req.params.group_id 
-			if (!id) throw error.WEB_API_INVALID_GROUP_DETAILS
+			if (!id) throw error.GLOBAL_MISSING_PARAM
 			// Avoid going any further if group does not exist even though changeGroupName will throw if it does not
 			if (!(await services.getGroup(id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
 			let newName = req.body.name
@@ -170,8 +174,10 @@ module.exports = function (services, queue) {
 
 	async function handleGetGroupById(req, res){
 		try {
+			// Make sure token is valid
+			await services.getUsername(getBearerToken(req))
 			let group_id = req.params.group_id
-			if (!(await services.getGroup(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST 
+			if (!group_id) throw error.GLOBAL_MISSING_PARAM
 			let group = await services.getGroupDetails(group_id)
 			res.status(200).json(group)
 		}
@@ -182,6 +188,8 @@ module.exports = function (services, queue) {
 
 	async function handleGetGroups(req, res) {
 		try {
+			// Make sure token is valid
+			await services.getUsername(getBearerToken(req))
 			let groups = await services.getGroups()
 			res.status(200).json(groups)
 		} catch (err) {
@@ -192,7 +200,7 @@ module.exports = function (services, queue) {
 	async function handleCreateUser(req, res) {
 		try {	
 			let newUserName = req.body.username
-			if (!newUserName) throw error.WEB_API_INVALID_USER_NAME
+			if (!newUserName) throw error.GLOBAL_MISSING_PARAM
 			let newToken = crypto.randomUUID()
 			let newTokenValidated = await services.createUser(newUserName, newToken)
 			res.status(201).json({ 'token' : newTokenValidated })
@@ -204,6 +212,7 @@ module.exports = function (services, queue) {
 	async function handleGetUser(req, res){
 		try {
 			let username = req.params.username
+			if (!username) throw error.GLOBAL_MISSING_PARAM
 			let user = await services.getUser(username) 
 
 			res.status(200).json(user)
@@ -214,7 +223,8 @@ module.exports = function (services, queue) {
 
 	async function handleAddGroupToUser(req,res){
 		try{
-			let group_id = req.body.group_id 
+			let group_id = req.body.id 
+			if (!group_id) throw error.GLOBAL_MISSING_PARAM
 			let updatedUser = await services.executeAuthed(getBearerToken(req),'addGroupToUser', group_id)
 
 			res.status(200).json(await services.getUser(updatedUser))
@@ -226,6 +236,7 @@ module.exports = function (services, queue) {
 	async function handleDeleteGroupFromUser(req,res){
 		try {
 			let group_id = req.params.group_id 
+			if (!group_id) throw error.GLOBAL_MISSING_PARAM
 			let updatedUser = await services.executeAuthed(getBearerToken(req),'deleteGroupFromUser', group_id)
 			
 			res.status(200).json(await services.getUser(updatedUser))
@@ -238,9 +249,12 @@ module.exports = function (services, queue) {
 
 	async function handleAddGameToGroup(req,res){
 		try {
-			let new_game_id = req.body.game_id  
-			let group_ID = req.params.group_id
-			let updatedGroup = await services.executeAuthed(getBearerToken(req), 'addGameToGroupByID', group_ID, new_game_id) 
+			// Make sure token is valid
+			await services.getUsername(getBearerToken(req))
+			let new_game_id = req.body.id  
+			let group_id = req.params.group_id
+			if (!new_game_id || !group_id) throw error.GLOBAL_MISSING_PARAM
+			let updatedGroup = await services.executeAuthed(getBearerToken(req), 'addGameToGroupByID', group_id, new_game_id) 
 			
 			res.status(201).json(updatedGroup)
 		} catch (err) { 
@@ -250,8 +264,11 @@ module.exports = function (services, queue) {
 
 	async function handleDeleteGameFromGroup(req, res) {
 		try {
+			// Make sure token is valid
+			await services.getUsername(getBearerToken(req))
 			let game_id = req.params.game_id 
 			let group_id = req.params.group_id
+			if (!game_id || !group_id) throw error.GLOBAL_MISSING_PARAM
 			await services.executeAuthed(getBearerToken(req), 'deleteGameFromGroup', group_id, game_id) 
 			let group = await services.getGroupDetails(group_id)
 
@@ -282,7 +299,7 @@ module.exports = function (services, queue) {
 
 	// Resource: /users
 	router.post('/users', handleCreateUser)  
-	router.get('/users/:username',  handleGetUser)
+	router.get('/users/:username', handleGetUser)
 	
 	// Resource: /users/groups
 	router.post('/users/groups', handleAddGroupToUser) 
