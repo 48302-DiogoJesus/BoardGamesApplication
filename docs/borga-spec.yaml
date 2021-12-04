@@ -54,12 +54,32 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GamesList"
+        503:
+          description: External API Unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        404:
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        500:
+        description: Unexpected response from external API
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
   /api/groups:
     get:
       tags:
         - Groups
       summary: Get all groups
       description: List all existing groups
+      security:
+      - bearerAuth: []
       responses:
         200:
           description: Groups List
@@ -67,11 +87,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GroupsList"
+        403: 
+          description: Not authorized to list all groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
     get:
       tags:
         - Groups
       summary: Get group information
       description: Get a group by its ID
+      security:
+      - bearerAuth: []
       parameters:
         - name: id
           in: params
@@ -82,11 +110,23 @@ paths:
             example: "/groups/2"
       responses:
         200:
-          description: A group has been found
+          description: Group Found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Group"
+        403: 
+          description: Not authorized to list a group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        404: 
+          description: Group does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
     delete:
       tags:
         - Groups
@@ -105,6 +145,24 @@ paths:
       responses:
         200:
           description: Group Deleted
+        403: 
+          description: Not authorized to delete another users group 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        400:
+          description: Invalid token or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        404: 
+          description: Group does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
     post:
       tags:
         - Groups
@@ -118,10 +176,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GroupData"
+              $ref: "#/components/schemas/GroupInit"
       responses:
         201:
           description: Group Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ID"
+        400:
+          description: Invalid token or missing parameters
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppError"
+        403: 
+          description: Not authorized to create a group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
     put:
       tags: 
         - Groups
@@ -130,19 +204,37 @@ paths:
       security:
       - bearerAuth: []
       requestBody:
-        description: Information to initialize the new group with
+        description: New Information to update the new group with
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/GroupID"
+              $ref: "#/components/schemas/GroupInit"
     responses:
       200:
-        description: The book is now in the collection
+        description: The group has been updated successfully
+        content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ID"
+      400:
+        description: Invalid group details or token or missing parameters
+        content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+      403: 
+        description: Not authorized to delete another users group 
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/BookAddedResponse"
+              $ref: "#/components/schemas/AppError"
+      404: 
+        description: Group does not exist
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppError"
   /api/groups/games:
     post:
       tags:
@@ -152,21 +244,46 @@ paths:
       security:
       - bearerAuth: []
       parameters:
-        - name: game_id
-          in: query
-          description: ID of the game to add to group
+        - name: group_id
+          in: params
+          description: ID of the group to add the game to
           required: true
           schema:
-            type: string
-          example: "?game_id=TAAifFP590"
+            type: int
+          example: "groups/1/"
+      requestBody:
+        description: ID of the game to add to the group
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ID"
       responses:
         200:
-          description: Book found
+          description: Game Added to Group successfully
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookResponse"
-    post:
+                $ref: "#/components/schemas/Group"
+        400:
+          description: Invalid token or missing parameters
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppError"
+        403: 
+            description: Not authorized to add a game to another users group
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppError"
+        404: 
+          description: Game or group does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+    delete:
       tags:
         - Group Games
       summary: Delete a game from a group
@@ -174,21 +291,76 @@ paths:
       security:
       - bearerAuth: []
       parameters:
+        - name: group_id
+          in: params
+          description: ID of the group to add the game to
+          required: true
+          schema:
+            type: int
+          example: "groups/1/"
         - name: game_id
           in: params
           description: ID of the game to remove from group
           required: true
           schema:
             type: string
-          example: "?game_id=TAAifFP590"
+          example: "groups/1/games/TAAifFP590"
       responses:
         200:
-          description: Book found
+          description: Game deleted successfuly from group
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/BookResponse"
+                $ref: "#/components/schemas/Group"
+        400:
+          description: Invalid token or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        403: 
+            description: Not authorized to delete a game to another users group
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppError"
+        404: 
+          description: Group does not exist or group does not contain the specified game
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/AppError"
   /api/users:
+    get:
+      tags:
+        - Users
+      summary: Get information about a user
+      description: Get information about a user given it's username
+      parameters:
+        - name: username
+          in: params
+          description: Username for the user to retrieve information about
+          required: true
+          schema:
+            type: string
+            example: "users/Manuel"
+      responses:
+        200: 
+          description: Got user information
+          content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserData" 
+        400:
+          description: Missing parameters
+          application/json:
+          schema:
+            $ref: "#/components/schemas/AppError" 
+        404:
+          description: User does not exist
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppError" 
     post:
       tags:
         - Users
@@ -208,6 +380,91 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Token" 
+        400:
+          description: Missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        409: 
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+  /api/users/groups:
+    post: 
+      tags:
+        - User Groups
+      summary: Adds a group reference to a user
+      description: References an existing group to an existing user
+      security:
+      - bearerAuth: []
+      requestBody:
+        description: ID of the group to add to user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ID"
+      responses:
+        200:
+          description: Group reference added to user (identified by its token)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        400:
+          description: Invalid token or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        404: 
+          description: Group does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        409:
+          description: User already has this group
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+    delete: 
+      tags:
+        - User Groups
+      summary: Deletes a group reference to a user
+      description: Removes a reference of a group from an existing user (identified by its token)
+      security:
+      - bearerAuth: []
+      requestBody:
+        description: ID of the group to remove from user groups
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ID"
+      responses:
+        200:
+          description: Group reference removed from user groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        400:
+          description: Invalid token or missing parameters
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
+        404: 
+          description: User doesn't have a reference to this group inside his groups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppError"
 components:
   securitySchemes:
       bearerAuth:
@@ -239,16 +496,27 @@ components:
           type: number
           format: int32
           description: Internal error code
-          example: 102
+          example: 0
         http_code:
           type: number
           format: int32
           description: Http error code
-          example: 500
+          example: 0
         message:
           type: string
           description: Error descriptive message
-          example: Could not create group
+          example: Error message here
+    GroupInit:
+      type: object
+      description: Group initialization schema
+      required: 
+        - name
+        - description
+      properties: 
+        name:
+          type: string
+        description: 
+          type: string
     Group:
       type: object
       description: A group of games
@@ -333,5 +601,7 @@ components:
         - username
       properties: 
         username: 
-          type: string
+          type:
+            - string
+            - int
           example: "Zé"
