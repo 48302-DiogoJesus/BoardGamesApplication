@@ -13,7 +13,7 @@ module.exports = function (data_ext, data_int) {
 
 			// Make sure a username associated with [token] exists
 			let username = await getUsername(token)
-			if (!username) throw errors.DATA_MEM_USER_DOES_NOT_EXIST
+			if (!username) throw errors.GLOBAL_INVALID_TOKEN
 
 			// Call requested function with proper username and arguments
 			return auth_imports[function_name](username, ...args)
@@ -111,7 +111,6 @@ module.exports = function (data_ext, data_int) {
 
 	const test_imports = {
 		// RESET FUNCTIONS
-		connectTokenWithUser : data_int.connectTokenWithUser,
 		resetGroups : data_int.resetGroups,
 		resetUsers : data_int.resetUsers,
 		resetTokens : data_int.resetTokens,

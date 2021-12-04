@@ -223,7 +223,6 @@ async function getGroupGameNames(group_id) {
         gamesGroup.push(originalGroupGames[game_id].name)
     }
     return gamesGroup 
-
 }
 
 /**
@@ -276,7 +275,7 @@ async function createUser(username, token){
     users[username] = {
         'groups' : []
     }
-    if (await userExists(username)) return token; else return error.DATA_MEM_COULD_NOT_CREATE_USER
+    return token
 }
 
 /**
@@ -287,8 +286,6 @@ async function createUser(username, token){
 async function deleteUser(username){
     if (!(await userExists(username))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
     delete users[username]
-    // Make sure user got deleted
-    if (await userExists(username)) throw error.DATA_MEM_USER_COULD_NOT_BE_DELETED; else return true
 }
 
 /**
@@ -320,7 +317,7 @@ async function addGroupToUser(username, group_id){
     if (!(await groupExists(group_id))) throw error.DATA_MEM_GROUP_DOES_NOT_EXIST
     if (await userHasGroup(username, group_id)) throw error.DATA_MEM_USER_ALREADY_HAS_THIS_GROUP
     users[username].groups.push(group_id) 
-    if (!(await userHasGroup(username, group_id))) throw error.DATA_MEM_COULD_NOT_ADD_GROUP_TO_USER; else return username
+    return username
 }
 
 /**
@@ -331,11 +328,8 @@ async function addGroupToUser(username, group_id){
  */
 async function deleteGroupFromUser(username, group_id) {
     if (!(await userExists(username))) throw error.DATA_MEM_USER_DOES_NOT_EXIST
-    // COMMENTED BECAUSE WE WANT THE USER TO BE ABLE TO HAVE GROUPS FROM OTHER USERS INSIDE HIS PERSONAL GROUPS
-    // if (await groupOwner(group_id) !== username) throw error.GLOBAL_NOT_AUTHORIZED
-    if (!(await userHasGroup(username,group_id))) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
+    if (!(await userHasGroup(username, group_id))) throw error.DATA_MEM_USER_DOES_NOT_HAVE_THIS_GROUP
     // Remove group from users list
-    console.log(users[username].groups.indexOf(parseInt(group_id)))
     users[username].groups.splice(users[username].groups.indexOf(parseInt(group_id)), 1);
     return username;
 }
@@ -358,7 +352,11 @@ async function getUserGroups(username) {
  */
 async function deleteUnexistingGroupsFromUsers(group_id) {
     for (let user of Object.keys(users)) {
-        await deleteGroupFromUser(user)
+        try {
+            await deleteGroupFromUser(user, group_id)
+        } catch (err) {
+            // Make the error stop here
+        }
     }
 } 
 
@@ -368,9 +366,6 @@ async function tokenToUsername(token) {
 }
 
 /* ------------------------------------ TEST FUNCTIONS ------------------------------------ */
-async function connectTokenWithUser(token, username) {
-    tokens[token] = username
-}
 async function resetGroups() {
     groups = {}
 }
@@ -414,6 +409,5 @@ module.exports = {
     // Test Functions
     resetGroups,
     resetUsers,
-    resetTokens,
-    connectTokenWithUser
+    resetTokens
 }

@@ -1,14 +1,12 @@
 // DONT FORGET
-- Export Postman collection as JSON to github
 
 // FINISH
-- Finish YAML OpenAPI file schemas and test
-- deleteGroupFromUser FIX BUG
+- Verify comments on all functions to make sure parameters are updated
+- Verify OpenAPI Swagger to see if makes sense
+- Comment the remaining functions
 
 // TESTS
-- Create tests to expect authentication errors
+- Automate Postman tests
 
 // DUVIDAS
-Search Game by name pode retornar uma lista ou tem que ser só o primeiro da lista
-YAML como definir erros sendo que temos muitos tipos de erros
-Entrega 1 pode conter já bocados do web-ui?
+Entrega 1 pode conter já partes do web-ui?
