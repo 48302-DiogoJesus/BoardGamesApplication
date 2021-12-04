@@ -23,15 +23,14 @@ test('Description of the test here', () => {
 })
 */
 
-const test_user = "Zé"
+const test_user = "João"
 const test_token = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+
 beforeEach(async () => { 
-    await services.connectTokenWithUser(test_token, test_user)
-    await services.createUser(test_user) 
+    await services.createUser(test_user, test_token) 
 })
 afterEach(async () => await services.resetAll())
-
 
 describe('Group Tests', () => {
 
@@ -107,16 +106,15 @@ describe('Group Games Tests', () => {
     jest.setTimeout(10 * 1500)
 
     test('Add game to a valid group', async () => {
-        await services.createUser(test_user)
         let newGroupID = await services.executeAuthed(test_token, 'createGroup', "New Group", "New Description")
-        expect(await services.executeAuthed(test_token, 'addGameToGroupByID', newGroupID, 'TAAifFP590')).toBeDefined()
+        expect(await services.executeAuthed(test_token, 'addGameToGroupByID', newGroupID, '898yJDStpO8X')).toBeDefined()
     })
     
     test('Add duplicate game to a group', async () => {
         let newGroupID = await services.executeAuthed(test_token, 'createGroup', "New Group", "New Description")
-        await services.executeAuthed(test_token, 'addGameToGroupByID', newGroupID, 'TAAifFP590')
+        await services.executeAuthed(test_token, 'addGameToGroupByID', newGroupID, '898yJDStpO8X')
         try {
-            await services.executeAuthed(test_token, 'addGameToGroupByID', newGroupID, 'TAAifFP590')
+            await services.executeAuthed(test_token, 'addGameToGroupByID', newGroupID, '898yJDStpO8X')
         } catch (err) {
             expect(err).toBe(error.DATA_MEM_GROUP_ALREADY_HAS_GAME)
         }
@@ -124,7 +122,7 @@ describe('Group Games Tests', () => {
     
     test('Add game to a unexisting group', async () => {
         try {
-            await services.executeAuthed(test_token, 'addGameToGroupByID', 1, 'TAAifFP590')
+            await services.executeAuthed(test_token, 'addGameToGroupByID', 1, '898yJDStpO8X')
         } catch (err) {
             expect(err).toBe(error.DATA_MEM_GROUP_DOES_NOT_EXIST)
         }
@@ -139,7 +137,6 @@ describe('Group Games Tests', () => {
         }
     })
     
-    // FIX THIS
     test('Get game names from valid group', async () => {
         let groupID = await services.executeAuthed(test_token, 'createGroup', "New Group", "New Description")
         await services.executeAuthed(test_token, 'addGameToGroupByID', groupID, '898yJDStpO8X')
@@ -147,33 +144,39 @@ describe('Group Games Tests', () => {
         expect(JSON.stringify(await services.getGroupGameNames(groupID))).toBe(JSON.stringify(["Testing Game 3", "Testing Game"]))
     })
     
-    // FIX THIS
-    test('Delete Group Game from valid group', async () => {
+    test('Add existing game to valid group', async () => {
         let groupID = await services.executeAuthed(test_token, 'createGroup', "New Group", "New Description")
-        let game = {
+        let game_obj = {
             'id': 'jhadHUIA',
             'name': "First"
         }
-        await services.executeAuthed(test_token, 'addGameToGroup', groupID, game)
-        expect(await services.groupHasGame(groupID, game.id)).toBe(true)
-        await services.executeAuthed(test_token, 'goupHasGame', groupID, game.id)
-        expect(await services.groupHasGame(groupID, game)).toBe(false)
+        await services.executeAuthed(test_token, 'addGameToGroup', groupID, game_obj)
+        expect(await services.groupHasGame(groupID, game_obj.id)).toBe(true)
+    })
+
+    test('Delete existing game from valid group', async () => {
+        let groupID = await services.executeAuthed(test_token, 'createGroup', "New Group", "New Description")
+        let game_obj = {
+            'id': 'jhadHUIA',
+            'name': "First"
+        }
+        await services.executeAuthed(test_token, 'addGameToGroup', groupID, game_obj)
+        expect(await services.groupHasGame(groupID, game_obj.id)).toBe(true)
+        await services.executeAuthed(test_token, 'deleteGameFromGroup', groupID, game_obj.id)
+        expect(await services.groupHasGame(groupID, game_obj.id)).toBe(false)
     })
 })
 
 describe('User Operations Tests ', () => {
 
-    // Create User
     test('Create user', async () => {
-        await services.createUser("Miguel")
+        await services.createUser("Miguel", "RANDOM_TOKEN")
         expect(await services.getUser("Miguel")).toBeDefined()
     })
 
-    // Delete Existing User
     test('Delete an existing user', async () => {
-        await services.createUser("Quim")
+        await services.createUser("Quim", "RANDOM_TOKEN")
         try {
-            await services.getUser("Quim")
             await services.executeAuthed(test_token, 'deleteUser', "Quim")
         } catch (err) {
             // Expect user to have been deleted successfully
@@ -181,7 +184,6 @@ describe('User Operations Tests ', () => {
         }
     })
 
-    // Delete Unexisting User
     test('Delete an unexisting user', async () => {
         try {
             await services.executeAuthed(test_token, 'deleteUser', "Quim")
@@ -191,17 +193,15 @@ describe('User Operations Tests ', () => {
         }
     })
 
-    // Associate a group to a user
     test('Add group to a user', async () => {
+        await services.createUser("Miguel", "RANDOM_TOKEN")
         let newGroupID = await services.executeAuthed(test_token, 'createGroup', "A", "B")
-        await services.executeAuthed(test_token, 'addGroupToUser', newGroupID)
-        let getUser = await services.getUser(test_user)
-        expect(getUser.groups.includes(newGroupID)).toBe(true)
+        await services.executeAuthed("RANDOM_TOKEN", 'addGroupToUser', newGroupID)
+        expect((await services.getUser("Miguel")).groups.includes(newGroupID)).toBe(true)
     })
 
-    //Associate a group to a user
     test('Add unexisting group to a user', async () => {
-        await services.createUser("Manuel")
+        await services.createUser("Manuel", "RANDOM_TOKEN")
         try {
             await services.executeAuthed(test_token, 'addGroupToUser', 93)
         } catch (err) {
@@ -209,10 +209,8 @@ describe('User Operations Tests ', () => {
         }
     })
 
-    //Delete group from a user
     test('Delete group from a user', async () => {
         let newGroupID = await services.executeAuthed(test_token, 'createGroup', "A", "B")
-        await services.executeAuthed(test_token, 'addGroupToUser', newGroupID)
         expect(await services.userHasGroup(test_user, newGroupID)).toBe(true)
         await services.executeAuthed(test_token, 'deleteGroupFromUser', newGroupID)
         expect(await services.userHasGroup(test_token, newGroupID)).toBe(false)
@@ -220,34 +218,38 @@ describe('User Operations Tests ', () => {
 
     //Get Groups from Users
     test('Get groups id from users', async () => {
-        let newGroupID = await services.executeAuthed(test_token, 'createGroup', "Novo Grupo", "nova descrição")
-        let newGroupID2 = await services.executeAuthed(test_token, 'createGroup', "Novo Grupo 2", "nova descrição 2")
-        // Only two of the following are actual groups
-        await services.executeAuthed(test_token, 'addGroupToUser', newGroupID2)
-        await services.executeAuthed(test_token, 'addGroupToUser', newGroupID)
-        // User will still have groups = [33, 90, 1, 2] even though 33 and 90 do not exist
-        // The function below will only return the existing groups and remove others from user groups
+        await services.executeAuthed(test_token, 'createGroup', "Novo Grupo", "nova descrição")
+        await services.executeAuthed(test_token, 'createGroup', "Novo Grupo 2", "nova descrição 2")
         expect((await services.getUserGroups(test_user)).length).toBe(2)
     })
 })
 
 
-describe('Authentication Tests ', () => {
+describe('Authentication Error Tests ', () => {
 
-    //Create group with an invalid token
-    test('Inalid Authentication', async () => {
-        expect(await services.executeAuthed('UNEXISTING_TOKEN', 'createGroup', "Novo Grupo", "nova descrição")).toBe(error.GLOBAL_INVALID_TOKEN)
+    test('Invalid Authentication Token', async () => {
+        try {
+            await services.executeAuthed('UNEXISTING_TOKEN', 'createGroup', "Novo Grupo", "nova descrição")
+        } catch (err) {
+            expect(err).toBe(error.GLOBAL_INVALID_TOKEN)
+        }
     })
     
-    //Delete group with an invalid token
     test('Delete a group with a invalid token', async () => {
-        expect(await services.executeAuthed('UNEXISTING_TOKEN', 'deleteGroup', 0)).toBe(error.GLOBAL_INVALID_TOKEN)
+        try {
+            await services.executeAuthed('UNEXISTING_TOKEN', 'deleteGroup', 0)
+        } catch (err) {
+            expect(err).toBe(error.GLOBAL_INVALID_TOKEN)
+        }
     })
 
-    //Delete group that you don´t own
-    test('Delete a group that you don\'t own', async () => {
-        await services.createUser("Miguel", "NEW_TOKEN")
-        await services.executeAuthed("NEW_TOKEN", 'createGroup', "Group_Name", "Group_Description")
-        expect(await services.executeAuthed(test_token, 'deleteGroup', 0)).toBe(error.GLOBAL_NOT_AUTHORIZED)
+    test('Delete a group from another user', async () => {
+        await services.createUser("Miguel", "RANDOM_TOKEN")
+        let groupID = await services.executeAuthed(test_token, 'createGroup', "Group_Name", "Group_Description")
+        try {
+            await services.executeAuthed("RANDOM_TOKEN", 'deleteGroup', groupID)
+        } catch (err) {
+            expect(err).toBe(error.GLOBAL_NOT_AUTHORIZED)
+        }
     })
 })
