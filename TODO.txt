@@ -1,5 +1,4 @@
 // TO DO
-- Verify comments on all functions to make sure parameters are updated
 - Verify OpenAPI Swagger to see if makes sense
 
 // IMPROVEMENTS
@@ -10,6 +9,7 @@
 - Automate Postman tests
 
 // DUVIDAS
+2 gets para o mesmo caminho no OpenAPI
 Entrega 1 pode conter já partes do web-ui?
 
 /// GLOBAL IDEA \\\

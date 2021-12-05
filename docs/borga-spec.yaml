@@ -547,7 +547,7 @@ components:
             $ref: "#/components/schemas/Group"
     ID:
       type: object
-      description: Game ID
+      description: Game ID / Group ID
       required:
         - id
       properties:
