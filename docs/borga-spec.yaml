@@ -216,7 +216,7 @@ paths:
         content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ID"
+                $ref: "#/components/schemas/Group"
       400:
         description: Invalid group details or token or missing parameters
         content:

@@ -10,8 +10,8 @@ var inQueue = 0
 async function waitQueue() {
     // Get in queue
     inQueue++
-    // Wait in queue for (no of people in queue * 1.5) seconds 
-    await delay(inQueue * 1.5)
+    // Wait in queue for (no of people in queue * 2) seconds 
+    await delay(inQueue * 2)
     // Get out of queue
     inQueue--
     return

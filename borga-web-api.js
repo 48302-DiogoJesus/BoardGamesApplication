@@ -2,11 +2,12 @@
 const express = require('express');
 const error = require('./borga-errors')
 
+// Random Token Generation
 const crypto = require('crypto')
 
+// Documentation imports
 const YAML = require('yamljs')
 const openApi = require('swagger-ui-express');
-
 const openApiSpec = YAML.load('./docs/borga-spec.yaml');
 
 module.exports = function (services, queue) {
@@ -63,13 +64,13 @@ module.exports = function (services, queue) {
 	async function handleGameQueries(req, res) {
 		try {
 			// Extract first query key
-			let firstQuery = Object.keys(req.query)[0]
+			let command = Object.keys(req.query)[0]
 			// If query is not recognized throw error
-			if (!Object.keys(validGamesQueries).includes(firstQuery)) throw error.WEB_API_INVALID_QUERY
+			if (!Object.keys(validGamesQueries).includes(command)) throw error.WEB_API_INVALID_QUERY
 			// Since this function calls the Exteral API it makes sense to queue here
 			await queue.wait()
 			// Call right function with parameter being req.query[top]
-			validGamesQueries[firstQuery](req.query[firstQuery], req, res)
+			validGamesQueries[command](req.query[command], req, res)
 		} catch (err) {
 			handleError(err, req, res)
 		}
@@ -125,6 +126,12 @@ module.exports = function (services, queue) {
 
 	/* GROUPS RELATED FUNCTIONS */
 
+	/**
+	 * Create a group
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with a the id of the group created
+	 */
 	async function handleCreateGroup(req, res) {
 		try {
 			// Make sure token is valid
@@ -139,6 +146,11 @@ module.exports = function (services, queue) {
 		}
 	}
 
+	/**
+	 * Delete a group
+	 * @param {req} request object 
+	 * @param {res} response object
+	 */
 	async function handleDeleteGroup(req, res) {
 		try {
 			// Make sure token is valid
@@ -152,6 +164,12 @@ module.exports = function (services, queue) {
 		}
 	}
 
+	/**
+	 * Update group information
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with the object of the updated group
+	 */
 	async function handleUpdateGroup(req, res) {
 		try {
 			// Make sure token is valid
@@ -166,12 +184,18 @@ module.exports = function (services, queue) {
 			if (newName) await services.executeAuthed(getBearerToken(req), 'changeGroupName', id, newName)
 			if (newDescription) await services.executeAuthed(getBearerToken(req), 'changeGroupDescription', id, newDescription)
 
-			res.status(204).json( { id : await services.getGroup(id) } )
+			res.status(200).json( { id : await services.getGroup(id) } )
 		} catch (err) {
 			handleError(err, req, res)
 		} 
 	}
 
+	/**
+	 * Get a group by its ID
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with a group object
+	 */
 	async function handleGetGroupById(req, res){
 		try {
 			// Make sure token is valid
@@ -186,6 +210,12 @@ module.exports = function (services, queue) {
 		}
 	}
 
+	/**
+	 * Get all groups
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds a list with all groups the application contains
+	 */
 	async function handleGetGroups(req, res) {
 		try {
 			// Make sure token is valid
@@ -197,6 +227,12 @@ module.exports = function (services, queue) {
 		}
 	} 
 
+	/**
+	 * Create a user
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with a bearer token for the created user
+	 */
 	async function handleCreateUser(req, res) {
 		try {	
 			let newUserName = req.body.username
@@ -209,6 +245,12 @@ module.exports = function (services, queue) {
 		}
 	}  
 
+	/**
+	 * Get a User
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with a bearer token for the created user
+	 */
 	async function handleGetUser(req, res){
 		try {
 			let username = req.params.username
@@ -221,6 +263,12 @@ module.exports = function (services, queue) {
 		}
 	} 
 
+	/**
+	 * Add Group Ref. to a user
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with the updated user object
+	 */
 	async function handleAddGroupToUser(req,res){
 		try{
 			let group_id = req.body.id 
@@ -233,6 +281,12 @@ module.exports = function (services, queue) {
 		}
 	} 
 
+	/**
+	 * Remove Group Ref. to a user
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with the updated user object
+	 */
 	async function handleDeleteGroupFromUser(req,res){
 		try {
 			let group_id = req.params.group_id 
@@ -247,6 +301,12 @@ module.exports = function (services, queue) {
 
 	/*-----------------------Group Game Functions--------------------------- */
 
+	/**
+	 * Add Game to a group
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with the updated user object
+	 */
 	async function handleAddGameToGroup(req,res){
 		try {
 			// Make sure token is valid
@@ -262,6 +322,12 @@ module.exports = function (services, queue) {
 		} 
 	} 
 
+	/**
+	 * Delete game from a group
+	 * @param {req} request object 
+	 * @param {res} response object
+	 * Responds with the updated group object
+	 */
 	async function handleDeleteGameFromGroup(req, res) {
 		try {
 			// Make sure token is valid
@@ -282,7 +348,8 @@ module.exports = function (services, queue) {
 	router.use('/docs', openApi.serve);
 	router.get('/docs', openApi.setup(openApiSpec));
 
-	// PATHS HANDLING \\
+	// API PATH HANDLING \\
+
 	// Resource: /games
 	router.get('/games', handleGameQueries);
 
@@ -293,7 +360,7 @@ module.exports = function (services, queue) {
 	router.delete('/groups/:group_id', handleDeleteGroup)
 	router.put('/groups/:group_id', handleUpdateGroup)
 
-	// Resource: '/groups/games'
+	// Resource: /groups/games
 	router.post('/groups/:group_id/games',handleAddGameToGroup)
 	router.delete('/groups/:group_id/games/:game_id', handleDeleteGameFromGroup)
 

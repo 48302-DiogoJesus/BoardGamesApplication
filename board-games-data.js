@@ -21,11 +21,15 @@ const COMMANDS = {
     search_game_name:`${BOARD_GAMES_URI}name=`
 }
 
-// Quickly Test functions inside this modules
+// Quickly Test functions inside this module
 async function test() {
+    try {
 
+    } catch (err) {
+
+    }
 }
-test()
+//test()
 
 // AUXILIARY FUNCTIONS \\
 
@@ -92,7 +96,7 @@ function buildGames(games) {
  * Verifies if Board Game Atlas Server is available and provide its response formatted correctly
  * @param {command} string with command name
  * @param {args} string with command arguments
- * @returns a promise resolved with a JSON object from response body or rejected with an exception with code '2'
+ * @returns a promise resolved with a JSON object from response body
  */
 async function fetchFromServer(command, args) {
     // isAvailable automatically ends the execution by throwing an error
@@ -106,8 +110,9 @@ async function fetchFromServer(command, args) {
 // MAIN FUNCTIONS \\
 
 /**
- * Get Top 10 popular games
- * @returns a promise with a list containing information about every game in the top 10 popularity ranking or an error passed before
+ * Get Top [n] popular games
+ * @param {n} Limiter
+ * @returns a promise with a list containing information about every game in the top [n] popularity ranking
  */
 async function getPopularGamesList(n) {
     return fetchFromServer("search_games")
@@ -122,7 +127,8 @@ async function getPopularGamesList(n) {
 
 /**
  * Get a game object from a Game ID
- * @returns a promise with a game object or an error passed before
+ * @param {id} Game ID 
+ * @returns a promise with a game object
  */
 async function getGameById(id) {
     return fetchFromServer("search_game_id", id)
@@ -152,7 +158,7 @@ async function getGamesListByName(name) {
 /**
  * Get a game object from a Game name search
  * @param {name} string to search for in the API by using the query "name=[name]"
- * @returns a promise which returns a game object if game was found or throws if it was not found
+ * @returns a promise which returns a game object if game was found
  */
  async function getGameByName(name) {
     return fetchFromServer("search_game_name", name)
@@ -167,6 +173,7 @@ async function getGamesListByName(name) {
 
 module.exports = {
     getGameById,
+    // Not used yet
     getGamesListByName,
     getGameByName,
     getPopularGamesList

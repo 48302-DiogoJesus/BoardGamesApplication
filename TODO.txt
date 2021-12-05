@@ -1,0 +1,19 @@
+// TO DO
+- Verify comments on all functions to make sure parameters are updated
+- Verify OpenAPI Swagger to see if makes sense
+
+// IMPROVEMENTS
+- Maybe use the queue for the rest of the API
+- Somewhere in the app the group games should be updated to keep up with EXT API
+
+// TESTS
+- Automate Postman tests
+
+// DUVIDAS
+Entrega 1 pode conter já partes do web-ui?
+
+/// GLOBAL IDEA \\\
+App allows users to create groups and add games to their own groups (only)
+Users can hold groups from other users in their own personal groups
+If the owner deletes a group then all the users which had that group in their groups list looses it as well
+Users get an access token upon sign up which then is used to identify them inside the app
