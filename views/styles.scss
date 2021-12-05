@@ -1,74 +1,100 @@
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+2&family=Ubuntu:wght@700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+2&family=Ubuntu:wght@700&display=swap");
 
-$backgroud-page-color: black;
-$nav-bar-color: green;
-$text-color: black;
+$backgroud-page-color: #490000;
+$nav-bar-color: #683308;
+$text-color: #b89f98;
+$text-hover: rgb(168, 168, 112);
 
 * {
-    transition: all .5s;
+  transition: all 0.5s;
 }
 
 body {
-    background-color: $backgroud-page-color;
-    font-family: 'M PLUS 2', sans-serif;
-    margin: 0;
+  background-color: $backgroud-page-color;
+  font-family: "M PLUS 2", sans-serif;
+  margin: 0;
 }
 
 .top-nav-bar {
+  display: flex;
+  justify-content: flex-start;
+  background-color: $nav-bar-color;
+  width: 100%;
+  max-height: 165px;
+  font-size: 20px;
+
+  ul.nav-links-container {
     display: flex;
-    justify-content: flex-start;
-    background-color: $nav-bar-color;
-    width: 100%;
-    max-height: 165px;
-    font-size: 20px;
-   
-    ul.nav-links-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 20px;
-        list-style: none;
-        & > * {
-            margin: 10px;
-        }
-        li {
-            display: flex;
-            align-items: center;
-            height : 100%;
-            .links {
-                font-weight: bold;
-                color: $text-color;
-                text-decoration: none;
-                padding: 0;
-                &:hover {
-                    color: yellow;
-                }
-            }
-            #nav-separator {
-                border-radius: 20px;
-                border: 0;
-                background-color: $text-color;
-                width: 4px;    
-                height: 80%;    
-            }
-            .search-field {
-                font-family: 'Ubuntu';
-                font-size: 1.1rem;
-                text-align: center;
-                border: 0;
-                border-width: 20px;
-                border-radius: 15px;
-                padding: 10px;
-                height: 15px;
-                width: 140px;
-                opacity: .7;
-                background-color: $text-color;
-                color: $nav-bar-color; 
-                &:hover {
-                    opacity: .9;
-                }
-            }
-        }        
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+    list-style: none;
+    & > * {
+      margin: 10px;
     }
-    
+    li {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      .links {
+        font-weight: bold;
+        color: $text-color;
+        text-decoration: none;
+        padding: 0;
+        &::before {
+          content: " ";
+          display: block;
+          width: 0;
+          height: 2px;
+          margin-top: 2px;
+          background-color: $text-hover;
+          transition: width 0.2s;
+        }
+        &::after {
+          content: " ";
+          display: block;
+          width: 0;
+          height: 2px;
+          margin-top: 2px;
+          background-color: $text-hover;
+          transition: width 0.2s;
+        }
+        &:hover {
+          color: $text-hover;
+          filter: saturate(3);
+          &::after {
+            width: 100%;
+          }
+          &::before {
+            width: 100%;
+          }
+        }
+      }
+      #nav-separator {
+        border-radius: 20px;
+        border: 0;
+        background-color: $text-color;
+        width: 4px;
+        height: 80%;
+      }
+      #search-input {
+        font-family: "Ubuntu";
+        font-size: 1.1rem;
+        text-align: center;
+        border: 0;
+        border-width: 20px;
+        border-radius: 15px;
+        padding: 10px;
+        height: 15px;
+        width: 140px;
+        max-width: 450px;
+        opacity: 0.7;
+        background-color: $text-color;
+        color: $nav-bar-color;
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
+  }
 }

@@ -1,4 +1,5 @@
 // DONT FORGET
+- Maybe use the queue for the rest of the API
 
 // FINISH
 - Verify comments on all functions to make sure parameters are updated
