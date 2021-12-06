@@ -257,11 +257,13 @@ describe('Authentication Error Tests ', () => {
 describe('External API tests', () => {
     
     test('Get a game by ID', async () => {
-
+        let game = await services.getGameById('898yJDStpO8X')
+        expect(game.id).toStrictEqual("898yJDStpO8X")
     })
 
     test('Get a game by Name', async () => {
-
+        let gameName = await services.getGameByName("Some Game")
+        expect(gameName.id).toStrictEqual("yqSHDAJO8X")
     })
 
     test('Get a games list by Name', async () => {
