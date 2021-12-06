@@ -74,9 +74,11 @@ async function getGamesListByName(name) {
     if (game == null) throw error.EXT_API_NOT_FOUND
     return queries[name]
 }
-const getPopularGamesList = getGamesListByName
+const getPopularGamesList = async() => games
 
 async function getGameByName(name) {
+    let game = queries[name]
+    if (game == null) throw error.EXT_API_NOT_FOUND
     return queries[name][0]
 }
 

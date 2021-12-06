@@ -253,3 +253,22 @@ describe('Authentication Error Tests ', () => {
         }
     })
 })
+
+describe('External API tests', () => {
+    
+    test('Get a game by ID', async () => {
+
+    })
+
+    test('Get a game by Name', async () => {
+
+    })
+
+    test('Get a games list by Name', async () => {
+
+    })
+
+    test('Get popular games list', async () => {
+
+    })
+})
