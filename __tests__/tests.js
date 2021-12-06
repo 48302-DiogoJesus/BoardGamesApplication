@@ -262,8 +262,8 @@ describe('External API tests', () => {
     })
 
     test('Get a game by Name', async () => {
-        let gameName = await services.getGameByName("Some Game")
-        expect(gameName.id).toStrictEqual("yqSHDAJO8X")
+        let game = await services.getGameByName("Some Game")
+        expect(game.id).toStrictEqual("yqSHDAJO8X")
     })
 
     test('Get a games list by Name', async () => {
