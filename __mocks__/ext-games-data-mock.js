@@ -74,7 +74,8 @@ async function getGamesListByName(name) {
     if (game == null) throw error.EXT_API_NOT_FOUND
     return queries[name]
 }
-const getPopularGamesList = async() => games
+
+const getPopularGamesList = async() => Object.keys(games).map(game_id => games[game_id])
 
 async function getGameByName(name) {
     let game = queries[name]

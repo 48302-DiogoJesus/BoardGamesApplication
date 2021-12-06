@@ -265,10 +265,31 @@ describe('External API tests', () => {
     })
 
     test('Get a games list by Name', async () => {
-
+        let searchList = await services.getGamesListByName("Some Game")
+        expect(searchList.length).toBe(2)
+        expect(searchList[1].id).toBe('yqSHDasdasdX')
+        
     })
 
     test('Get popular games list', async () => {
+        let popularGamesList = await services.getPopularGamesList()
+        expect(Object.values(popularGamesList).length).toBe(4)
+        expect(popularGamesList[0].id).toBe('yqR4PtpO8X')
+    })
 
+    test('Get unexisting game by ID', async () => {
+        try {
+            await services.getGameById('NON_EXISTING')
+        } catch (err) {
+            expect(err).toBe(error.EXT_API_NOT_FOUND)
+        }
+    })
+
+    test('Get unexisting game by Name', async () => {
+        try {
+            await services.getGameByName('NON_EXISTING')
+        } catch (err) {
+            expect(err).toBe(error.EXT_API_NOT_FOUND)
+        }
     })
 })
