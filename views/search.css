@@ -1,0 +1,45 @@
+#searched-for-title {
+  pointer-events: none;
+}
+
+.search-results {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  margin-top: 25px;
+}
+
+.search-results .search-results-table {
+  width: 85%;
+  border-collapse: separate;
+  border-spacing: 15px;
+}
+
+.search-results .search-results-table .column-titles {
+  color: #b89f98;
+}
+
+.search-results .search-results-table .column-titles th {
+  border: 3px solid rgba(168, 168, 112, 0.3);
+  border-radius: 15px;
+  padding: 10px 20px;
+}
+
+.search-results .search-results-table .table-row {
+  text-align: center;
+  color: #bba6a6;
+  outline: 3px solid #694d4d;
+  border-radius: 2px;
+}
+
+.search-results .search-results-table .table-row td {
+  padding: 15px 0;
+}
+/*# sourceMappingURL=search.css.map */

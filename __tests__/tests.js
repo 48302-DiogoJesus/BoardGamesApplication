@@ -1,4 +1,5 @@
-const borga_data_mem = require('../borga-data-mem')
+const test_user = "João", test_token = '4chwViN4QHCTyTnUud88ww'
+const borga_data_mem = require('../borga-data-mem')(test_user, test_token)
 const mock_board_games_data = require('ext-games-data-mock')
 
 const services = require('../borga-services')(mock_board_games_data, borga_data_mem) 
@@ -23,14 +24,10 @@ test('Description of the test here', () => {
 })
 */
 
-const test_user = "João"
-const test_token = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-
-beforeEach(async () => { 
+afterEach(async () => {
+    await services.resetAll()
     await services.createUser(test_user, test_token) 
 })
-afterEach(async () => await services.resetAll())
 
 describe('Group Tests', () => {
 

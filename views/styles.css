@@ -1,12 +1,12 @@
-@import url("https://fonts.googleapis.com/css2?family=M+PLUS+2&family=Ubuntu:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap");
 * {
   -webkit-transition: all 0.5s;
   transition: all 0.5s;
+  font-family: "Ubuntu";
 }
 
 body {
   background-color: #490000;
-  font-family: "M PLUS 2", sans-serif;
   margin: 0;
 }
 
@@ -52,14 +52,14 @@ body {
   height: 100%;
 }
 
-.top-nav-bar ul.nav-links-container li .links {
+.top-nav-bar ul.nav-links-container li .top-bar-text {
   font-weight: bold;
   color: #b89f98;
   text-decoration: none;
   padding: 0;
 }
 
-.top-nav-bar ul.nav-links-container li .links::before {
+.top-nav-bar ul.nav-links-container li .top-bar-text::before {
   content: " ";
   display: block;
   width: 0;
@@ -70,7 +70,7 @@ body {
   transition: width 0.2s;
 }
 
-.top-nav-bar ul.nav-links-container li .links::after {
+.top-nav-bar ul.nav-links-container li .top-bar-text::after {
   content: " ";
   display: block;
   width: 0;
@@ -81,17 +81,17 @@ body {
   transition: width 0.2s;
 }
 
-.top-nav-bar ul.nav-links-container li .links:hover {
+.top-nav-bar ul.nav-links-container li .top-bar-text:hover {
   color: #a8a870;
   -webkit-filter: saturate(3);
           filter: saturate(3);
 }
 
-.top-nav-bar ul.nav-links-container li .links:hover::after {
+.top-nav-bar ul.nav-links-container li .top-bar-text:hover::after {
   width: 100%;
 }
 
-.top-nav-bar ul.nav-links-container li .links:hover::before {
+.top-nav-bar ul.nav-links-container li .top-bar-text:hover::before {
   width: 100%;
 }
 

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=M+PLUS+2&family=Ubuntu:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap");
 
 $backgroud-page-color: #490000;
 $nav-bar-color: #683308;
@@ -7,11 +7,11 @@ $text-hover: rgb(168, 168, 112);
 
 * {
   transition: all 0.5s;
+  font-family: "Ubuntu";
 }
 
 body {
   background-color: $backgroud-page-color;
-  font-family: "M PLUS 2", sans-serif;
   margin: 0;
 }
 
@@ -36,7 +36,7 @@ body {
       display: flex;
       align-items: center;
       height: 100%;
-      .links {
+      .top-bar-text {
         font-weight: bold;
         color: $text-color;
         text-decoration: none;

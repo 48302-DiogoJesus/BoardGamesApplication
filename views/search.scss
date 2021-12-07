@@ -1,0 +1,36 @@
+$text-color: #b89f98;
+$text-hover: rgb(168, 168, 112);
+
+#searched-for-title {
+    pointer-events: none;
+}
+
+.search-results {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    width: 100%;
+    margin-top: 25px;
+   .search-results-table {
+    width: 85%;
+    border-collapse:separate; 
+    border-spacing: 15px;
+    .column-titles {
+        color:$text-color;
+        th {
+            border: 3px solid rgba($text-hover, .3);
+            border-radius: 15px;
+            padding: 10px 20px;
+        }
+    }
+    .table-row {
+        text-align: center;
+        color: rgb(187, 166, 166);
+        outline: 3px solid rgb(105, 77, 77);
+        border-radius: 2px;
+        td {
+            padding: 15px 0;
+        }
+    }
+   }
+}
